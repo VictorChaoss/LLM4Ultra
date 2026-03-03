@@ -53,7 +53,7 @@
  */
 
 // ─── RATE LIMIT CONFIG (dev can change these) ─────────────────
-const MAX_REQUESTS_PER_HOUR  = 20;   // requests per IP per hour
+const MAX_REQUESTS_PER_HOUR = 20;   // requests per IP per hour
 const MAX_TOKENS_PER_REQUEST = 300;  // max tokens per API call
 const RATE_WINDOW_MS = 60 * 60 * 1000; // 1 hour window
 
@@ -101,6 +101,41 @@ const PROVIDER_CONFIG = {
     url: 'https://api.openai.com/v1/chat/completions',
     keyEnv: 'OPENAI_API_KEY',
     defaultModel: 'gpt-4o',
+  },
+  nvidia: {
+    url: 'https://integrate.api.nvidia.com/v1/chat/completions',
+    keyEnv: 'NVIDIA_API_KEY',
+    defaultModel: 'meta/llama-3.1-70b-instruct',
+  },
+  together: {
+    url: 'https://api.together.xyz/v1/chat/completions',
+    keyEnv: 'TOGETHER_API_KEY',
+    defaultModel: 'meta-llama/Meta-Llama-3.1-70B-Instruct-Turbo',
+  },
+  qwen: {
+    url: 'https://dashscope.aliyuncs.com/compatible-mode/v1/chat/completions',
+    keyEnv: 'QWEN_API_KEY',
+    defaultModel: 'qwen-plus',
+  },
+  mistral: {
+    url: 'https://api.mistral.ai/v1/chat/completions',
+    keyEnv: 'MISTRAL_API_KEY',
+    defaultModel: 'mistral-large-latest',
+  },
+  deepseek: {
+    url: 'https://api.deepseek.com/chat/completions',
+    keyEnv: 'DEEPSEEK_API_KEY',
+    defaultModel: 'deepseek-chat',
+  },
+  minimax: {
+    url: 'https://api.minimax.chat/v1/chat/completions',
+    keyEnv: 'MINIMAX_API_KEY',
+    defaultModel: 'abab6.5s-chat',
+  },
+  kimi: {
+    url: 'https://api.moonshot.cn/v1/chat/completions',
+    keyEnv: 'KIMI_API_KEY',
+    defaultModel: 'moonshot-v1-8k',
   },
   custom: {
     urlEnv: 'CUSTOM_API_URL',
@@ -268,9 +303,9 @@ export default async function handler(req, res) {
 // Also adds a daily counter per IP for long-term monitoring.
 
 const PER_MINUTE_LIMIT = 5;   // max 5 requests per IP per minute
-const PER_DAY_LIMIT    = 200; // max 200 requests per IP per day
+const PER_DAY_LIMIT = 200; // max 200 requests per IP per day
 const minuteStore = new Map();
-const dayStore    = new Map();
+const dayStore = new Map();
 
 function checkEnhancedRateLimit(ip) {
   const now = Date.now();
@@ -310,8 +345,8 @@ const ENABLE_SERVER_LOGGING = false;
 function serverLog(ip, providerId, model, promptLength, status, latencyMs) {
   if (!ENABLE_SERVER_LOGGING) return;
   console.log(JSON.stringify({
-    ts:       new Date().toISOString(),
-    ip:       ip.substring(0, 8) + '***',  // partial IP only
+    ts: new Date().toISOString(),
+    ip: ip.substring(0, 8) + '***',  // partial IP only
     provider: providerId,
     model,
     promptChars: promptLength,
@@ -324,8 +359,8 @@ function serverLog(ip, providerId, model, promptLength, status, latencyMs) {
 // ③ ABUSE DETECTION — Anon AI
 // Detects suspicious patterns: identical prompts, rapid-fire, giant prompts
 const ABUSE_PATTERNS = {
-  MAX_PROMPT_CHARS:    8000,  // reject absurdly long prompts
-  MAX_MESSAGES_COUNT:  50,    // reject too many messages in one call
+  MAX_PROMPT_CHARS: 8000,  // reject absurdly long prompts
+  MAX_MESSAGES_COUNT: 50,    // reject too many messages in one call
 };
 const recentPrompts = new Map(); // ip → last prompt hash
 

@@ -165,27 +165,83 @@ const PROVIDER_SVGS = {
 
 
 
-let cachedModels = null;
-let modelFetchPromise = null;
+let cachedModels = {};
+let modelFetchPromises = {};
 
-async function fetchOpenRouterModels() {
-  if (cachedModels) return cachedModels;
-  if (modelFetchPromise) return modelFetchPromise;
-  modelFetchPromise = fetch('https://openrouter.ai/api/v1/models')
+const FALLBACK_MODELS = {
+  'anthropic': [
+    { id: 'claude-3-7-sonnet-latest', name: 'Claude 3.7 Sonnet', provider: 'anthropic' },
+    { id: 'claude-3-5-sonnet-latest', name: 'Claude 3.5 Sonnet', provider: 'anthropic' },
+    { id: 'claude-3-opus-latest', name: 'Claude 3 Opus', provider: 'anthropic' },
+    { id: 'claude-3-5-haiku-latest', name: 'Claude 3.5 Haiku', provider: 'anthropic' }
+  ],
+  'google': [
+    { id: 'gemini-2.5-flash', name: 'Gemini 2.5 Flash', provider: 'google' },
+    { id: 'gemini-2.5-pro', name: 'Gemini 2.5 Pro', provider: 'google' },
+    { id: 'gemini-2.0-flash', name: 'Gemini 2.0 Flash', provider: 'google' }
+  ],
+  'custom': [
+    { id: 'custom-model', name: 'Custom Model (Define in Settings)', provider: 'custom' },
+    { id: 'gpt-4o', name: 'GPT-4o (Fallback)', provider: 'custom' },
+    { id: 'llama3', name: 'Llama 3 (Fallback)', provider: 'custom' }
+  ]
+};
+
+async function fetchProviderModels() {
+  const provider = SESSION.provider || 'openrouter';
+
+  if (cachedModels[provider]) return cachedModels[provider];
+  if (modelFetchPromises[provider]) return modelFetchPromises[provider];
+
+  let endpoint = '';
+  let headers = {};
+
+  if (provider === 'openai') endpoint = 'https://api.openai.com/v1/models';
+  else if (provider === 'groq') endpoint = 'https://api.groq.com/openai/v1/models';
+  else if (provider === 'nvidia') endpoint = 'https://integrate.api.nvidia.com/v1/models';
+  else if (provider === 'together') endpoint = 'https://api.together.xyz/v1/models';
+  else if (provider === 'minimax') endpoint = 'https://api.minimax.chat/v1/models';
+  else if (provider === 'kimi') endpoint = 'https://api.moonshot.cn/v1/models';
+  else if (provider === 'qwen') endpoint = 'https://dashscope.aliyuncs.com/compatible-mode/v1/models';
+  else if (provider === 'mistral') endpoint = 'https://api.mistral.ai/v1/models';
+  else if (provider === 'deepseek') endpoint = 'https://api.deepseek.com/v1/models';
+  else if (provider === 'openrouter') endpoint = 'https://openrouter.ai/api/v1/models';
+  else if (provider === 'ollama') endpoint = 'http://localhost:11434/api/tags';
+
+  if (!endpoint) {
+    return FALLBACK_MODELS[provider] || FALLBACK_MODELS['custom'];
+  }
+
+  if (SESSION.apiKey && provider !== 'ollama') {
+    headers['Authorization'] = `Bearer ${SESSION.apiKey}`;
+  }
+
+  modelFetchPromises[provider] = fetch(endpoint, { headers })
     .then(r => r.json())
     .then(data => {
-      cachedModels = (data.data || []).map(m => ({
-        id: m.id,
-        name: m.name || m.id,
-        provider: m.id.split('/')[0],
-        context: m.context_length,
-        pricing: m.pricing,
-      })).sort((a, b) => a.name.localeCompare(b.name));
-      modelFetchPromise = null;
-      return cachedModels;
+      let modelsArray = [];
+      if (provider === 'ollama') {
+        modelsArray = (data.models || []).map(m => ({ id: m.name, name: m.name, provider: 'ollama' }));
+      } else {
+        modelsArray = (data.data || []).map(m => ({
+          id: m.id,
+          name: m.name || m.id,
+          provider: provider === 'openrouter' ? m.id.split('/')[0] : provider,
+          context: m.context_length,
+          pricing: m.pricing,
+        }));
+      }
+      cachedModels[provider] = modelsArray.sort((a, b) => a.name.localeCompare(b.name));
+      modelFetchPromises[provider] = null;
+      return cachedModels[provider];
     })
-    .catch(e => { console.error('Model fetch failed:', e); modelFetchPromise = null; return []; });
-  return modelFetchPromise;
+    .catch(e => {
+      console.error(`Model fetch failed for ${provider}:`, e);
+      modelFetchPromises[provider] = null;
+      return FALLBACK_MODELS[provider] || FALLBACK_MODELS['custom'];
+    });
+
+  return modelFetchPromises[provider];
 }
 
 /* ─── SESSION STATE — API key NEVER leaves this object ──────── */
@@ -432,7 +488,15 @@ function updateProviderUI(provider) {
     openai: 'sk-...',
     anthropic: 'sk-ant-...',
     google: 'AIza...',
+    groq: 'gsk_...',
+    nvidia: 'nvapi-...',
+    together: 'API key...',
+    qwen: 'sk-...',
+    mistral: 'Mistral API key...',
+    minimax: 'sk-...',
+    kimi: 'sk-...',
     custom: 'Your API key...',
+    ollama: 'Local (no key required)'
   };
   if (keyInput) keyInput.placeholder = SESSION.apiKey ? '••••••••••••••••  (saved)' : (placeholders[provider] || 'API key');
   if (customGroup) customGroup.style.display = provider === 'custom' ? 'block' : 'none';
@@ -793,7 +857,7 @@ async function fetchAIResponse(modelKey, history) {
     const resp = await fetch('/api/chat', {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({ provider: 'openrouter', model: agent.model_id, messages, max_tokens: 200 }),
+      body: JSON.stringify({ provider: SESSION.provider || 'openrouter', model: agent.model_id, messages, max_tokens: 200 }),
     });
     if (resp.status === 429) {
       const d = await resp.json().catch(() => ({}));
@@ -814,11 +878,26 @@ async function fetchAIResponse(modelKey, history) {
     model: agent.model_id, max_tokens: 200, messages,
   };
 
-  if (webSearchEnabled) {
+  if (webSearchEnabled && (SESSION.provider === 'openrouter' || !SESSION.provider)) {
     payload.plugins = [{ id: 'web' }];
   }
 
-  const resp = await fetch('https://openrouter.ai/api/v1/chat/completions', {
+  // Dynamic local endpoint based on selected provider
+  let endpoint = 'https://openrouter.ai/api/v1/chat/completions';
+  const p = SESSION.provider || 'openrouter';
+  if (p === 'openai') endpoint = 'https://api.openai.com/v1/chat/completions';
+  else if (p === 'groq') endpoint = 'https://api.groq.com/openai/v1/chat/completions';
+  else if (p === 'nvidia') endpoint = 'https://integrate.api.nvidia.com/v1/chat/completions';
+  else if (p === 'together') endpoint = 'https://api.together.xyz/v1/chat/completions';
+  else if (p === 'qwen') endpoint = 'https://dashscope.aliyuncs.com/compatible-mode/v1/chat/completions';
+  else if (p === 'mistral') endpoint = 'https://api.mistral.ai/v1/chat/completions';
+  else if (p === 'deepseek') endpoint = 'https://api.deepseek.com/chat/completions';
+  else if (p === 'minimax') endpoint = 'https://api.minimax.chat/v1/chat/completions';
+  else if (p === 'kimi') endpoint = 'https://api.moonshot.cn/v1/chat/completions';
+  else if (p === 'ollama') endpoint = 'http://localhost:11434/v1/chat/completions';
+  if (p === 'custom' && SESSION.customUrl) endpoint = SESSION.customUrl;
+
+  const resp = await fetch(endpoint, {
     method: 'POST',
     headers: {
       'Authorization': `Bearer ${SESSION.apiKey}`,
@@ -1069,16 +1148,16 @@ function toggleSeatMenu(seatKey, anchorEl) {
   menu.innerHTML = `
     <div class="seat-menu-header">${AI_MODELS[seatKey].name} — swap model</div>
     <div class="seat-search-wrap">
-      <input type="text" class="seat-search" placeholder="🔍 Search all models..." />
+      <input type="text" class="seat-search" placeholder="🔍 Search active provider models..." />
     </div>
     <div class="seat-menu-list"></div>
-    <div class="seat-menu-footer">All models via OpenRouter</div>
+    <div class="seat-menu-footer">Models from ${SESSION.provider.toUpperCase()}</div>
   `;
 
   const listEl = menu.querySelector('.seat-menu-list');
   renderSeatItems(listEl, models, current, seatKey);
 
-  /* Search input — debounced, fetches from OpenRouter */
+  /* Search input — debounced, fetches from Provider */
   const searchInput = menu.querySelector('.seat-search');
   searchInput.addEventListener('input', () => {
     clearTimeout(searchDebounce);
@@ -1089,7 +1168,7 @@ function toggleSeatMenu(seatKey, anchorEl) {
     }
     searchDebounce = setTimeout(async () => {
       listEl.innerHTML = '<div class="seat-menu-footer">Searching...</div>';
-      const allModels = await fetchOpenRouterModels();
+      const allModels = await fetchProviderModels();
       const filtered = allModels.filter(m =>
         m.name.toLowerCase().includes(q) || m.id.toLowerCase().includes(q)
       ).slice(0, 12);

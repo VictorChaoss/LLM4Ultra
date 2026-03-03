@@ -1,3 +1,4 @@
 [2026-03-02T20:46:59-08:00] Copied over api/chat.js, DEPLOYMENT.md, README.md, AGENT_NOTES.md, boot-screen.html. Created vercel.json, .gitignore, and PROGRESS.md
 [2026-03-02T21:00:37-08:00] AGENT 3 complete: Surgically added settings modal, control buttons (voice, vision, pause, export, share) and badges to app.html
 [2026-03-02T23:57:04-08:00] AGENT complete: Executed Premium CSS UI overhaul (Glassmorphism, animations). Surgically merged script.js consensus features. Fixed Model Picker to swap exact official SVGs live. Updated README.
+[2026-03-03T00:35:00-08:00] AGENT 4 complete: Dynamic Provider Model Check integrated. Added full native support for Qwen, Mistral, DeepSeek, Minimax, and Kimi. Reconfigued api/chat.js Vercel proxy to dynamically map to different provider endpoints. Updated UI drop-downs.

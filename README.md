@@ -57,8 +57,8 @@ Read `AGENT_NOTES.md` before touching anything. It contains:
 
 - **4-agent sequential debate** — agents read and respond to each other
 - **Agent name-awareness** — each AI knows who else is at the table
-- **Multi-provider** — Groq (free), OpenRouter (free), OpenAI, Ollama, Custom
-- **Dynamic Model Picker** — Swap any seat's model on the fly using live OpenRouter search integration
+- **Multi-provider** — Native support for OpenRouter, OpenAI, Anthropic, Google AI, Groq, NVIDIA NIM, Together AI, Qwen (DashScope), Mistral AI, DeepSeek, Moonshot (Kimi), MiniMax, Ollama (Local), and Custom Endpoints.
+- **Dynamic Model Picker** — Swap any seat's model on the fly. Dynamically fetches the up-to-date `/v1/models` list from your actively selected API provider so you're not restricted to OpenRouter.
 - **Premium UI & SVGs** — Glassmorphism design with official, dynamic SVG logos for all providers (OpenAI, Claude, Gemini, DeepSeek, Qwen, Meta, Grok, Mistral)
 - **Consensus & Synthesis** — Auto-generates a neutral summary of agreements and tensions after every round
 - **Auto-Pilot** — continuous debate with rotating prompts
