@@ -103,12 +103,19 @@
                 <!-- Bottom: Gemini -->
                 <div class="ai-seat pos-bottom" id="seat-gemini">
                     <div class="avatar gemini">
-                        <svg viewBox="0 0 24 24" width="26" height="26">
-                            <path fill="white"
+                        <svg viewBox="0 0 24 24" width="40" height="40">
+                            <defs>
+                                <linearGradient id="gemini-grad" x1="0" y1="24" x2="24" y2="0"
+                                    gradientUnits="userSpaceOnUse">
+                                    <stop stop-color="#439DDF" />
+                                    <stop offset="0.52" stop-color="#4F87ED" />
+                                    <stop offset="0.78" stop-color="#9476C5" />
+                                    <stop offset="0.88" stop-color="#BC688E" />
+                                    <stop offset="1" stop-color="#D6645D" />
+                                </linearGradient>
+                            </defs>
+                            <path fill="url(#gemini-grad)"
                                 d="M11.967 3.061c.14-.389.684-.389.824 0 1.085 3.012 3.42 5.347 6.432 6.432.389.14.389.684 0 .824-3.012 1.085-5.347 3.42-6.432 6.432-.14.389-.684.389-.824 0-1.085-3.012-3.42-5.347-6.432-6.432-.389-.14-.389-.684 0-.824 3.012-1.085 5.347-3.42 6.432-6.432z" />
-                            <path fill="white"
-                                d="M11.967 20.939c.14.389.684.389.824 0 1.085-3.012 3.42-5.347 6.432-6.432.389-.14.389-.684 0-.824-3.012-1.085-5.347-3.42-6.432-6.432-.14-.389-.684-.389-.824 0-1.085 3.012-3.42 5.347-6.432 6.432-.389.14-.389.684 0 .824 3.012 1.085 5.347 3.42 6.432 6.432z" />
-                            <circle fill="white" cx="12" cy="12" r="2.5" />
                         </svg>
                     </div>
                     <div class="ai-badge">Gemini <small>1.5 Pro</small></div>

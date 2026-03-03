@@ -535,7 +535,7 @@ body {
 }
 
 .avatar.gemini {
-    background: linear-gradient(135deg, #1a73e8, #8ab4f8) !important;
+    background-color: white !important;
 }
 
 .avatar.grok {
