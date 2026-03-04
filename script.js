@@ -938,19 +938,14 @@ function getMockResponse(modelKey, history) {
 }
 
 /* ════════════════════════════════════════════════════════════════
-   CONSENSUS
+   CONSENSUS  — transcript-only (no floating popup)
    ════════════════════════════════════════════════════════════════ */
 async function synthesizeConsensus(responses) {
-  if (!FLAGS.consensusPanel) {
-    /* Still add to transcript even if panel is off */
-  }
+  /* Always hide the floating panel — consensus goes to transcript only */
   const panel = document.getElementById('consensus-panel');
-  const textEl = document.getElementById('consensus-text');
+  if (panel) panel.classList.remove('visible');
 
-  if (panel && FLAGS.consensusPanel) {
-    if (textEl) textEl.innerHTML = '<em>Synthesizing...</em>';
-    panel.classList.add('visible');
-  }
+  if (!FLAGS.consensusPanel) return;
 
   const transcript = responses.map(r => `${r.name}: ${r.text}`).join('\n\n');
   try {
@@ -987,13 +982,9 @@ async function synthesizeConsensus(responses) {
     const data = await resp.json();
     const summary = data.choices?.[0]?.message?.content || '';
 
-    if (panel && FLAGS.consensusPanel && textEl) {
-      textEl.innerHTML = typeof marked !== 'undefined' ? marked.parse(summary) : escHtml(summary);
-    }
     appendToTranscript('consensus', summary);
 
   } catch (e) {
-    if (panel) panel.classList.remove('visible');
     console.error('Consensus failed:', e);
   }
 }
