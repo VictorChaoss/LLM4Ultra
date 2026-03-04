@@ -208,7 +208,7 @@ export default async function handler(req, res) {
     return res.status(400).set(corsHeaders).json({ error: 'Invalid JSON' });
   }
 
-  const { provider: providerId, model, messages } = body;
+  const { provider: providerId, model, messages, plugins } = body;
 
   if (!providerId || !messages || !Array.isArray(messages)) {
     return res.status(400).set(corsHeaders).json({ error: 'Missing required fields: provider, messages' });
@@ -262,6 +262,10 @@ export default async function handler(req, res) {
     // Hard cap tokens — prevents expensive runaway requests
     max_tokens: Math.min(body.max_tokens || MAX_TOKENS_PER_REQUEST, MAX_TOKENS_PER_REQUEST),
   };
+
+  if (plugins) {
+    upstreamBody.plugins = plugins;
+  }
 
   // ── Forward to provider ──────────────────────────────────────
   let upstream;

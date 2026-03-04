@@ -295,7 +295,7 @@ const elements = {
   closeModalBtn: document.getElementById('close-modal-btn'),
   saveSettingsBtn: document.getElementById('save-settings-btn'),
   apiKeyInput: document.getElementById('api-key-input'),
-  webSearchToggle: null,
+  webSearchToggle: document.getElementById('flag-web-search'),
   randomTopicBtn: document.getElementById('random-topic-btn'),
   autopilotToggle: document.getElementById('autopilot-toggle'),
   stopBtn: document.getElementById('stop-btn'),
@@ -859,7 +859,13 @@ async function fetchAIResponse(modelKey, history) {
     const resp = await fetch('/api/chat', {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({ provider: SESSION.provider || 'openrouter', model: agent.model_id, messages, max_tokens: 200 }),
+      body: JSON.stringify({
+        provider: SESSION.provider || 'openrouter',
+        model: agent.model_id,
+        messages,
+        max_tokens: 200,
+        ...(webSearchEnabled ? { plugins: [{ id: 'web' }] } : {})
+      }),
     });
     if (resp.status === 429) {
       const d = await resp.json().catch(() => ({}));
