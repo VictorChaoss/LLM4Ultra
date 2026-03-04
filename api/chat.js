@@ -191,6 +191,15 @@ export default async function handler(req, res) {
     });
   }
 
+  // Enhanced rate limiting — Anon AI
+  const enhanced = checkEnhancedRateLimit(ip);
+  if (!enhanced.allowed) {
+    return res.status(429).set(corsHeaders).json({
+      error: enhanced.reason,
+      retryAfter: enhanced.retryAfter,
+    });
+  }
+
   // ── Parse + validate body ────────────────────────────────────
   let body;
   try {
@@ -216,6 +225,12 @@ export default async function handler(req, res) {
 
   if (safeMessages.length === 0) {
     return res.status(400).set(corsHeaders).json({ error: 'No valid messages' });
+  }
+
+  // Abuse detection — Anon AI
+  const abuse = detectAbuse(ip, safeMessages);
+  if (abuse.abuse) {
+    return res.status(400).set(corsHeaders).json({ error: abuse.reason });
   }
 
   // ── Resolve provider settings ────────────────────────────────
@@ -250,6 +265,7 @@ export default async function handler(req, res) {
 
   // ── Forward to provider ──────────────────────────────────────
   let upstream;
+  const start = Date.now();
   try {
     upstream = await fetch(apiUrl, {
       method: 'POST',
@@ -270,6 +286,9 @@ export default async function handler(req, res) {
 
   // ── Record successful request + return ───────────────────────
   recordRequest(ip);
+  recordEnhancedRequest(ip); // Anon AI addition
+
+  serverLog(ip, providerId, apiModel, JSON.stringify(safeMessages).length, upstream.status, Date.now() - start);
 
   // Strip provider metadata before returning — only send what browser needs
   return res.status(200).set(corsHeaders).json({

@@ -2,3 +2,20 @@
 [2026-03-02T21:00:37-08:00] AGENT 3 complete: Surgically added settings modal, control buttons (voice, vision, pause, export, share) and badges to app.html
 [2026-03-02T23:57:04-08:00] AGENT complete: Executed Premium CSS UI overhaul (Glassmorphism, animations). Surgically merged script.js consensus features. Fixed Model Picker to swap exact official SVGs live. Updated README.
 [2026-03-03T00:35:00-08:00] AGENT 4 complete: Dynamic Provider Model Check integrated. Added full native support for Qwen, Mistral, DeepSeek, Minimax, and Kimi. Reconfigued api/chat.js Vercel proxy to dynamically map to different provider endpoints. Updated UI drop-downs.
+[2026-03-04T07:22:00-08:00] AGENT 10 complete: Applied UI fixes to script.js and style.css. Fixed model names on swap, replaced Gemini and Grok logos, appended model search CSS, verified in browser.
+[2026-03-04T08:00:00-08:00] AGENT 11 complete: Ported index.html and maintenance.html, added Web Search toggle to app.html settings and wired to script.js API calls.
+[2026-03-04T08:15:00-08:00] AGENT 9 complete: Final Security and Feature Audit complete. Merged Anon AI backend security features into api/chat.js. Verified frontend UI features and fixed model swap menu click bug in script.js. Vercel testing tasks logged for main developer in AGENT9.
+[2026-03-04T08:23:00-08:00] AGENT 12 created: Removed MDs for Agents 9, 10, 11 and created AGENT12_full_app_audit.md for a comprehensive final audit covering code security and in-browser testing.
+[2026-03-04T08:49:00-08:00] AGENT 12 DEEP AUDIT — BUGS FOUND AND FIXED in script.js:
+  BUG 1: applySeatModel() had hardcoded provider→name map (5 of 17 providers). Swapping to DeepSeek/Mistral/Qwen showed raw provider ID instead of friendly name. FIXED: Added PROVIDER_DISPLAY_NAMES map with 17 providers.
+  BUG 2: applySeatModel() checked 'meta' for Llama but model IDs use 'meta-llama/'. Name never resolved to "Llama". FIXED: Map covers both 'meta' and 'meta-llama'.
+  BUG 3: updateAvatarVisuals() had dead no-op normalization (assigned same values). Fallback SVG used Font Awesome <i> tag that isn't loaded. FIXED: Removed dead code, unified fallback SVG, added background reset.
+  BUG 4: renderSeats() had identical dead no-op normalization. FIXED: Cleaned up.
+  VERIFIED: Browser tested ChatGPT→DeepSeek→Mistral, Claude→Qwen swaps. All names, subtitles, and logos update correctly.
+[2026-03-04T09:15:00-08:00] AGENT 12 LOGO AUDIT — SVG Updates in script.js:
+  FIX 1: DeepSeek SVG was a generic circle-with-arcs. Replaced with official whale logo (Simple Icons path data).
+  FIX 2: Qwen SVG was a rough owl on purple disc. Replaced with clean face icon on circle.
+  FIX 3: Added Cohere SVG (was missing — providers in MODEL_COLORS had no logo).
+  FIX 4: Added Perplexity SVG (was missing — same issue).
+  HARDCODED SCAN: Confirmed zero hardcoded model IDs in API paths. agent.model_id used dynamically at lines 858, 876.
+  VERIFIED: Browser tested DeepSeek whale, Cohere green, Perplexity teal — all render correctly on swap.
