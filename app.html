@@ -7,12 +7,32 @@
     <title>LLM4</title>
     <link rel="icon" type="image/png" href="logo.png">
     <link rel="stylesheet" href="style.css">
+    <link rel="stylesheet" href="style_custom.css">
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
 </head>
 
 <body>
     <div class="app-container">
+
+        <!-- Launch Warning Overlay (Victor's Live Site Feature) -->
+        <div id="launch-warning-overlay" class="modal-overlay">
+            <div class="modal glass-panel launch-warning-modal">
+                <div class="modal-header warning-header">
+                    <h2><i class="fa-solid fa-triangle-exclamation"></i> V1 DEPLOYMENT ACTIVE</h2>
+                </div>
+                <div class="modal-body warning-body">
+                    <p>LLM4 was engineered with a singular, uncompromising goal: total dominance in AI user experience.
+                    </p>
+                    <p>Because we drop features aggressively, you may experience <strong>temporary instability,
+                            connection drops, or bugs.</strong></p>
+                    <p class="takeover-text">You are testing bleeding-edge tech. The takeover has begun.</p>
+                </div>
+                <div class="modal-footer warning-footer">
+                    <button id="accept-warning-btn" class="primary-btn warning-btn">I Understand</button>
+                </div>
+            </div>
+        </div>
 
         <!-- Sidebar for Settings & Small Transcript -->
         <aside class="sidebar glass-panel">
@@ -246,6 +266,13 @@
                                 <span class="flag-label">Image Upload (Vision)</span>
                                 <span class="flag-desc">Attach images to the debate — requires vision-capable
                                     model</span>
+                            </div>
+                        </label>
+                        <label class="flag-row">
+                            <input type="checkbox" id="flag-grid-layout">
+                            <div class="flag-text">
+                                <span class="flag-label">Grid Layout (Beta)</span>
+                                <span class="flag-desc">Switch to a compact grid view for 8-model parity</span>
                             </div>
                         </label>
                         <label class="flag-row">

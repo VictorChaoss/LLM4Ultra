@@ -1,0 +1,185 @@
+/* ─── VICTOR'S LIVE SITE FEATURES ────────────────────────────── */
+
+/* V1 Deployment Warning Modal */
+.launch-warning-modal {
+    max-width: 500px !important;
+    border: 1px solid rgba(168, 85, 247, 0.3) !important;
+    box-shadow: 0 0 30px rgba(168, 85, 247, 0.15), 0 0 0 1px rgba(255, 255, 255, 0.05) inset !important;
+    background: rgba(15, 15, 20, 0.95) !important;
+}
+
+.warning-header {
+    border-bottom: 1px solid rgba(168, 85, 247, 0.2) !important;
+    padding-bottom: 1rem !important;
+    margin-bottom: 1rem !important;
+}
+
+.warning-header h2 {
+    color: #a855f7 !important;
+    display: flex !important;
+    align-items: center !important;
+    gap: 0.5rem !important;
+    font-size: 1.1rem !important;
+    letter-spacing: 1px !important;
+}
+
+.warning-body {
+    color: #e2e8f0 !important;
+    font-size: 0.95rem !important;
+    line-height: 1.6 !important;
+}
+
+.warning-body p {
+    margin-bottom: 1rem !important;
+}
+
+.warning-body p:last-child {
+    margin-bottom: 0 !important;
+}
+
+.warning-body strong {
+    color: #c084fc !important;
+    font-weight: 600 !important;
+}
+
+.takeover-text {
+    font-family: monospace !important;
+    color: #94a3b8 !important;
+    border-top: 1px dashed rgba(255, 255, 255, 0.1) !important;
+    padding-top: 1rem !important;
+    margin-top: 0.5rem !important;
+}
+
+.warning-footer {
+    border-top: 1px solid rgba(168, 85, 247, 0.2) !important;
+    display: flex !important;
+    justify-content: flex-end !important;
+    padding-top: 1rem !important;
+    margin-top: 1rem !important;
+}
+
+.warning-btn {
+    background: rgba(168, 85, 247, 0.1) !important;
+    border: 1px solid rgba(168, 85, 247, 0.4) !important;
+    color: #d8b4fe !important;
+}
+
+.warning-btn:hover {
+    background: rgba(168, 85, 247, 0.2) !important;
+    border-color: rgba(168, 85, 247, 0.6) !important;
+    color: #fff !important;
+    box-shadow: 0 0 15px rgba(168, 85, 247, 0.3) !important;
+}
+
+/* Override pointer-events so warning modal is clickable */
+#launch-warning-overlay.modal-overlay {
+    pointer-events: auto;
+    z-index: 9999;
+}
+
+#accept-warning-btn {
+    pointer-events: auto !important;
+    position: relative !important;
+    z-index: 10000 !important;
+}
+
+/* Desktop Grid Layout (Toggled via JS) */
+
+body.grid-layout {
+    overflow-y: auto !important;
+}
+
+body.grid-layout .app-container {
+    display: flex !important;
+    flex-direction: row !important;
+    height: 100vh !important;
+    overflow: hidden !important;
+}
+
+body.grid-layout .sidebar {
+    width: 280px !important;
+    height: 100% !important;
+    min-width: 280px !important;
+    order: 0 !important;
+    border-right: 1px solid var(--panel-border) !important;
+}
+
+body.grid-layout .brand-section {
+    display: flex !important;
+}
+
+body.grid-layout .roundtable-area {
+    order: 1 !important;
+    height: 100% !important;
+    flex: 1 !important;
+    overflow-y: auto !important;
+    padding: 1.5rem !important;
+    display: flex !important;
+    flex-direction: column !important;
+}
+
+body.grid-layout .roundtable-wrapper {
+    display: grid !important;
+    grid-template-columns: repeat(auto-fit, minmax(250px, 1fr)) !important;
+    gap: 1.5rem !important;
+    align-items: start !important;
+    justify-items: center !important;
+    padding: 1rem !important;
+    height: auto !important;
+    flex: 1 !important;
+    background: transparent !important;
+    transform: none !important;
+}
+
+body.grid-layout .table-center {
+    display: none !important;
+}
+
+body.grid-layout .ai-seat {
+    position: static !important;
+    transform: none !important;
+    width: 100% !important;
+    height: auto !important;
+    background: var(--panel-bg) !important;
+    border: 1px solid var(--panel-border) !important;
+    border-radius: 12px !important;
+    padding: 1rem !important;
+    display: block !important;
+}
+
+body.grid-layout .speech-bubble {
+    position: static !important;
+    width: 100% !important;
+    max-height: none !important;
+    opacity: 1 !important;
+    pointer-events: auto !important;
+    transform: none !important;
+    box-shadow: none !important;
+    background: transparent !important;
+    border: none !important;
+    padding: 0 !important;
+    margin-top: 1rem !important;
+}
+
+body.grid-layout .bubble-content {
+    max-height: none !important;
+    font-size: 0.9rem !important;
+}
+
+body.grid-layout .bubble-top::before,
+body.grid-layout .bubble-bottom::after,
+body.grid-layout .bubble-left::before,
+body.grid-layout .bubble-right::after {
+    display: none !important;
+}
+
+body.grid-layout .avatar {
+    width: 48px !important;
+    height: 48px !important;
+    margin-bottom: 0.5rem !important;
+}
+
+body.grid-layout .ai-badge {
+    margin-top: 0 !important;
+    margin-bottom: 0.5rem !important;
+}

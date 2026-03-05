@@ -462,6 +462,7 @@ function openSettings() {
     'flag-voice-tts': 'voiceTTS',
     'flag-voice-stt': 'voiceSTT',
     'flag-vision': 'vision',
+    'flag-grid-layout': 'gridLayout',
   };
   for (const [id, key] of Object.entries(map)) {
     const el = document.getElementById(id);
@@ -535,6 +536,7 @@ function saveSettings() {
   FLAGS.voiceTTS = !!document.getElementById('flag-voice-tts')?.checked;
   FLAGS.voiceSTT = !!document.getElementById('flag-voice-stt')?.checked;
   FLAGS.vision = !!document.getElementById('flag-vision')?.checked;
+  FLAGS.gridLayout = !!document.getElementById('flag-grid-layout')?.checked;
 
   const selectedCount = parseInt(document.getElementById('seat-count-select')?.value || '4');
   if (selectedCount >= 2 && selectedCount <= 8) {
@@ -588,6 +590,9 @@ function applyFeatureFlags() {
   const attachBtn = document.getElementById('attach-btn');
   if (micBtn) micBtn.style.display = FLAGS.voiceSTT ? 'flex' : 'none';
   if (attachBtn) attachBtn.style.display = FLAGS.vision ? 'flex' : 'none';
+
+  /* Grid Layout (Victor's Feature) */
+  document.body.classList.toggle('grid-layout', !!FLAGS.gridLayout);
 }
 
 // Pre-defined random topics to spark debate
@@ -1409,6 +1414,22 @@ document.addEventListener('DOMContentLoaded', () => {
   if (attachBtn) attachBtn.addEventListener('click', () => Vision.triggerUpload());
   if (visionInput) visionInput.addEventListener('change', e => Vision.handleFile(e.target));
   if (visionClear) visionClear.addEventListener('click', () => Vision.clear());
+
+  /* Victor's Warning Modal Dismissal */
+  const acceptWarningBtn = document.getElementById('accept-warning-btn');
+  if (acceptWarningBtn) {
+    acceptWarningBtn.addEventListener('click', () => {
+      const overlay = document.getElementById('launch-warning-overlay');
+      if (overlay) {
+        overlay.style.transition = 'opacity 0.5s ease-out';
+        overlay.style.opacity = '0';
+        overlay.style.pointerEvents = 'none';
+        setTimeout(() => {
+          overlay.style.display = 'none';
+        }, 500);
+      }
+    });
+  }
 
   /* Per-seat model pickers */
   document.querySelectorAll('.seat-clickable').forEach(badge => {
