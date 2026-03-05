@@ -1,0 +1,185 @@
+--- Block starting at line 2057 ---
+/* V1 Deployment Warning Modal */
+.launch-warning-modal {
+    max-width: 500px;
+    border: 1px solid rgba(168, 85, 247, 0.3);
+    box-shadow: 0 0 30px rgba(168, 85, 247, 0.15), 0 0 0 1px rgba(255, 255, 255, 0.05) inset;
+    background: rgba(15, 15, 20, 0.95);
+
+--- Block starting at line 2065 ---
+.warning-header {
+    border-bottom: 1px solid rgba(168, 85, 247, 0.2);
+
+--- Block starting at line 2069 ---
+.warning-header h2 {
+    color: #a855f7;
+
+--- Block starting at line 2078 ---
+.warning-body {
+
+--- Block starting at line 2084 ---
+.warning-body p {
+
+--- Block starting at line 2088 ---
+.warning-body p:last-child {
+
+--- Block starting at line 2092 ---
+.warning-body strong {
+    color: #c084fc;
+
+--- Block starting at line 2097 ---
+.takeover-text {
+
+--- Block starting at line 2099 ---
+    color: #94a3b8;
+    border-top: 1px dashed rgba(255,255,255,0.1);
+    padding-top: 1rem;
+
+--- Block starting at line 2105 ---
+.warning-footer {
+    border-top: 1px solid rgba(168, 85, 247, 0.2);
+
+--- Block starting at line 2111 ---
+.warning-btn {
+    background: rgba(168, 85, 247, 0.1);
+    border: 1px solid rgba(168, 85, 247, 0.4);
+    color: #d8b4fe;
+
+--- Block starting at line 2117 ---
+.warning-btn:hover {
+    background: rgba(168, 85, 247, 0.2);
+    border-color: rgba(168, 85, 247, 0.6);
+    color: #fff;
+    box-shadow: 0 0 15px rgba(168, 85, 247, 0.3);
+
+--- Block starting at line 2124 ---
+/* Override pointer-events so warning modal is clickable */
+#launch-warning-overlay.modal-overlay {
+    pointer-events: auto !important;
+    z-index: 9999 !important;
+
+--- Block starting at line 2130 ---
+/* Force button to be clickable */
+#accept-warning-btn {
+    pointer-events: auto !important;
+
+--- Block starting at line 2134 ---
+    z-index: 10000 !important;
+
+--- Block starting at line 2137 ---
+/* Desktop Grid Layout (Toggled via JS) */
+
+--- Block starting at line 2139 ---
+body.grid-layout {
+
+--- Block starting at line 2143 ---
+body.grid-layout .app-container {
+
+--- Block starting at line 2158 ---
+body.grid-layout .roundtable-area {
+
+--- Block starting at line 2175 ---
+body.grid-layout .sidebar {
+
+--- Block starting at line 2196 ---
+body.grid-layout #close-transcript-btn {
+
+--- Block starting at line 2201 ---
+body.grid-layout .brand-section {
+
+--- Block starting at line 2205 ---
+body.grid-layout .sidebar-header {
+
+--- Block starting at line 2210 ---
+body.grid-layout .sidebar-header h2 {
+
+--- Block starting at line 2214 ---
+body.grid-layout .transcript-container {
+
+--- Block starting at line 2224 ---
+body.grid-layout .transcript-msg {
+
+--- Block starting at line 2229 ---
+body.grid-layout .transcript-msg strong {
+
+--- Block starting at line 2233 ---
+body.grid-layout .mobile-only {
+
+--- Block starting at line 2240 ---
+body.grid-layout .status-indicator {
+
+--- Block starting at line 2245 ---
+body.grid-layout .roundtable-wrapper {
+
+--- Block starting at line 2259 ---
+body.grid-layout .ai-seat {
+
+--- Block starting at line 2276 ---
+body.grid-layout .ai-seat.speaking {
+
+--- Block starting at line 2281 ---
+body.grid-layout .ai-seat.speaking .avatar {
+
+--- Block starting at line 2288 ---
+body.grid-layout .avatar.chatgpt {
+
+--- Block starting at line 2292 ---
+body.grid-layout .avatar.claude {
+
+--- Block starting at line 2296 ---
+body.grid-layout .avatar.gemini {
+
+--- Block starting at line 2300 ---
+body.grid-layout .avatar.grok {
+
+--- Block starting at line 2305 ---
+body.grid-layout .roundtable-wrapper:has(.ai-seat.speaking) .ai-seat:not(.speaking) {
+
+--- Block starting at line 2309 ---
+body.grid-layout .avatar {
+
+--- Block starting at line 2326 ---
+body.grid-layout .avatar svg {
+
+--- Block starting at line 2330 ---
+body.grid-layout .avatar svg {
+
+--- Block starting at line 2335 ---
+body.grid-layout .ai-badge {
+
+--- Block starting at line 2341 ---
+body.grid-layout .ai-badge small {
+
+--- Block starting at line 2346 ---
+body.grid-layout .speech-bubble {
+
+--- Block starting at line 2350 ---
+body.grid-layout .speech-bubble.visible {
+
+--- Block starting at line 2355 ---
+body.grid-layout #bubble-chatgpt {
+
+--- Block starting at line 2359 ---
+body.grid-layout #bubble-claude {
+
+--- Block starting at line 2363 ---
+body.grid-layout #bubble-gemini {
+
+--- Block starting at line 2367 ---
+body.grid-layout #bubble-grok {
+
+--- Block starting at line 2372 ---
+body.grid-layout .speech-bubble::after {
+
+--- Block starting at line 2376 ---
+body.grid-layout .bubble-content {
+
+--- Block starting at line 2383 ---
+body.grid-layout .input-area {
+
+--- Block starting at line 2397 ---
+body.grid-layout textarea {
+
+--- Block starting at line 2402 ---
+body.grid-layout #mobile-transcript-btn {
+
