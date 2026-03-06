@@ -137,6 +137,11 @@ const PROVIDER_CONFIG = {
     keyEnv: 'KIMI_API_KEY',
     defaultModel: 'moonshot-v1-8k',
   },
+  'x-ai': {
+    url: 'https://api.x.ai/v1/chat/completions',
+    keyEnv: 'XAI_API_KEY',
+    defaultModel: 'grok-3-mini',
+  },
   custom: {
     urlEnv: 'CUSTOM_API_URL',
     keyEnv: 'CUSTOM_API_KEY',

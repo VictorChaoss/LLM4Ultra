@@ -21,7 +21,3 @@
   VERIFIED: Browser tested DeepSeek whale, Cohere green, Perplexity teal — all render correctly on swap.
   SYNTAX RECOVERY: Fixed critical JS syntax error introduced during SVG updates causing blank renders.
   WEB SEARCH: Wired up `#flag-web-search` from HTML into `script.js` directly. Injected `plugins: [{ id: 'web' }]` conditionally, and patched `/api/chat` backend to forward this payload to OpenRouter securely for the developer.
-
-- [x] Fixed an issue where the model name in the UI would not update dynamically when swapping models on a seat.
-
-- [x] Updated README.md and DEPLOYMENT.md with explicit instructions for developers on using Vercel Environment Variables for API keys (including TAVILY_API_KEY) and warnings against hardcoding them.

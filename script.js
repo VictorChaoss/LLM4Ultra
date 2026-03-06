@@ -35,7 +35,7 @@ RULES: Under 100 words. NEVER speak FOR other AIs or invent their words.`
   },
   grok: {
     id: 'grok', name: 'Grok',
-    model_id: 'x-ai/grok-beta',
+    model_id: 'x-ai/grok-3-mini',
     color: '#e0e0e0', ttsRate: 1.1, ttsPitch: 1.2,
     persona: (others) =>
       `You are Grok (xAI) — the Unfiltered Contrarian in this AI roundtable debate.
@@ -114,8 +114,8 @@ const SEAT_MODELS = {
     { id: 'meta-llama/llama-4-maverick:free', label: 'Llama 4', badge: 'FREE' },
   ],
   grok: [
-    { id: 'x-ai/grok-beta', label: 'Grok Beta', badge: 'DEFAULT' },
-    { id: 'x-ai/grok-2-1212', label: 'Grok 2', badge: 'LATEST' },
+    { id: 'x-ai/grok-3-mini', label: 'Grok 3 Mini', badge: 'DEFAULT' },
+    { id: 'x-ai/grok-3', label: 'Grok 3', badge: 'LATEST' },
     { id: 'mistralai/mistral-large-2411', label: 'Mistral Large', badge: 'ALT' },
     { id: 'deepseek/deepseek-chat:free', label: 'DeepSeek V3', badge: 'FREE' },
   ],
@@ -208,6 +208,7 @@ async function fetchProviderModels() {
   else if (provider === 'mistral') endpoint = 'https://api.mistral.ai/v1/models';
   else if (provider === 'deepseek') endpoint = 'https://api.deepseek.com/v1/models';
   else if (provider === 'openrouter') endpoint = 'https://openrouter.ai/api/v1/models';
+  else if (provider === 'x-ai') endpoint = 'https://api.x.ai/v1/models';
   else if (provider === 'ollama') endpoint = 'http://localhost:11434/api/tags';
 
   if (!endpoint) {
@@ -298,6 +299,7 @@ const elements = {
   webSearchToggle: document.getElementById('flag-web-search'),
   randomTopicBtn: document.getElementById('random-topic-btn'),
   autopilotToggle: document.getElementById('autopilot-toggle'),
+  layoutToggle: document.getElementById('layout-toggle'),
   stopBtn: document.getElementById('stop-btn'),
   caContainer: document.getElementById('ca-container'),
   caText: document.getElementById('ca-text'),
@@ -327,6 +329,24 @@ function init() {
       elements.stopBtn.style.display = e.target.checked ? 'flex' : 'none';
     }
   });
+
+  if (elements.layoutToggle) {
+    elements.layoutToggle.addEventListener('change', (e) => {
+      if (e.target.checked) {
+        document.body.classList.add('grid-layout');
+        localStorage.setItem('grid_layout_enabled', 'true');
+      } else {
+        document.body.classList.remove('grid-layout');
+        localStorage.setItem('grid_layout_enabled', 'false');
+      }
+    });
+
+    // Initial load
+    if (localStorage.getItem('grid_layout_enabled') === 'true') {
+      elements.layoutToggle.checked = true;
+      document.body.classList.add('grid-layout');
+    }
+  }
 
   // Mobile Transcript Toggle
   if (elements.mobileTranscriptBtn && elements.closeTranscriptBtn && elements.sidebar) {
@@ -462,7 +482,6 @@ function openSettings() {
     'flag-voice-tts': 'voiceTTS',
     'flag-voice-stt': 'voiceSTT',
     'flag-vision': 'vision',
-    'flag-grid-layout': 'gridLayout',
   };
   for (const [id, key] of Object.entries(map)) {
     const el = document.getElementById(id);
@@ -492,6 +511,7 @@ function updateProviderUI(provider) {
     anthropic: 'sk-ant-...',
     google: 'AIza...',
     groq: 'gsk_...',
+    'x-ai': 'xai-...',
     nvidia: 'nvapi-...',
     together: 'API key...',
     qwen: 'sk-...',
@@ -536,7 +556,6 @@ function saveSettings() {
   FLAGS.voiceTTS = !!document.getElementById('flag-voice-tts')?.checked;
   FLAGS.voiceSTT = !!document.getElementById('flag-voice-stt')?.checked;
   FLAGS.vision = !!document.getElementById('flag-vision')?.checked;
-  FLAGS.gridLayout = !!document.getElementById('flag-grid-layout')?.checked;
 
   const selectedCount = parseInt(document.getElementById('seat-count-select')?.value || '4');
   if (selectedCount >= 2 && selectedCount <= 8) {
@@ -590,9 +609,6 @@ function applyFeatureFlags() {
   const attachBtn = document.getElementById('attach-btn');
   if (micBtn) micBtn.style.display = FLAGS.voiceSTT ? 'flex' : 'none';
   if (attachBtn) attachBtn.style.display = FLAGS.vision ? 'flex' : 'none';
-
-  /* Grid Layout (Victor's Feature) */
-  document.body.classList.toggle('grid-layout', !!FLAGS.gridLayout);
 }
 
 // Pre-defined random topics to spark debate
@@ -856,9 +872,7 @@ async function fetchAIResponse(modelKey, history) {
   ];
 
   /* Proxy path when deployed on Vercel — key lives server-side */
-  const isHosted = !window.location.hostname.includes('localhost') &&
-    !window.location.hostname.includes('127.0.0.1') &&
-    !window.location.protocol.startsWith('file');
+  const isHosted = window.location.hostname !== 'localhost' && window.location.hostname !== '127.0.0.1';
 
   if (isHosted) {
     const resp = await fetch('/api/chat', {
@@ -887,8 +901,15 @@ async function fetchAIResponse(modelKey, history) {
   }
 
   /* Local dev path — user-provided key from settings modal */
+
+  // Strip provider prefix if making a native direct API call
+  let finalModelId = agent.model_id;
+  if (SESSION.provider !== 'openrouter') {
+    finalModelId = finalModelId.split('/').pop();
+  }
+
   const payload = {
-    model: agent.model_id, max_tokens: 200, messages,
+    model: finalModelId, max_tokens: 200, messages,
   };
 
   if (webSearchEnabled && (SESSION.provider === 'openrouter' || !SESSION.provider)) {
@@ -900,6 +921,7 @@ async function fetchAIResponse(modelKey, history) {
   const p = SESSION.provider || 'openrouter';
   if (p === 'openai') endpoint = 'https://api.openai.com/v1/chat/completions';
   else if (p === 'groq') endpoint = 'https://api.groq.com/openai/v1/chat/completions';
+  else if (p === 'x-ai') endpoint = 'https://api.x.ai/v1/chat/completions';
   else if (p === 'nvidia') endpoint = 'https://integrate.api.nvidia.com/v1/chat/completions';
   else if (p === 'together') endpoint = 'https://api.together.xyz/v1/chat/completions';
   else if (p === 'qwen') endpoint = 'https://dashscope.aliyuncs.com/compatible-mode/v1/chat/completions';
@@ -962,9 +984,7 @@ async function synthesizeConsensus(responses) {
 
   const transcript = responses.map(r => `${r.name}: ${r.text}`).join('\n\n');
   try {
-    const isHosted = !window.location.hostname.includes('localhost') &&
-      !window.location.hostname.includes('127.0.0.1') &&
-      !window.location.protocol.startsWith('file');
+    const isHosted = window.location.hostname !== 'localhost' && window.location.hostname !== '127.0.0.1';
 
     const msgs = [
       { role: 'system', content: `You are a neutral synthesis engine. Produce a CONSENSUS SUMMARY:\n**Agreed:** [what the group converged on]\n**Tension:** [the core disagreement]\n**Synthesis:** [2-sentence integrated conclusion]\nUnder 120 words total. Be precise.` },
@@ -1406,6 +1426,25 @@ document.addEventListener('DOMContentLoaded', () => {
   const attachBtn = document.getElementById('attach-btn');
   const visionInput = document.getElementById('vision-file-input');
   const visionClear = document.getElementById('vision-clear-btn');
+  const closeBtn = document.getElementById('close-modal-btn');
+  if (closeBtn) closeBtn.addEventListener('click', closeSettings);
+
+  // Launch Warning Overlay Logic
+  const launchOverlay = document.getElementById('launch-warning-overlay');
+  const acceptWarningBtn = document.getElementById('accept-warning-btn');
+
+  const dismissWarning = () => {
+    if (launchOverlay) launchOverlay.style.display = 'none';
+    localStorage.setItem('v1_warning_accepted_v2', 'true');
+  };
+
+  if (acceptWarningBtn) acceptWarningBtn.addEventListener('click', dismissWarning);
+
+  // Show if not previously accepted
+  // BYPASS: Always hide the warning overlay
+  if (launchOverlay) {
+    launchOverlay.style.display = 'none';
+  }
 
   if (pauseBtn) pauseBtn.addEventListener('click', togglePause);
   if (exportBtn) exportBtn.addEventListener('click', exportTranscript);
@@ -1414,22 +1453,6 @@ document.addEventListener('DOMContentLoaded', () => {
   if (attachBtn) attachBtn.addEventListener('click', () => Vision.triggerUpload());
   if (visionInput) visionInput.addEventListener('change', e => Vision.handleFile(e.target));
   if (visionClear) visionClear.addEventListener('click', () => Vision.clear());
-
-  /* Victor's Warning Modal Dismissal */
-  const acceptWarningBtn = document.getElementById('accept-warning-btn');
-  if (acceptWarningBtn) {
-    acceptWarningBtn.addEventListener('click', () => {
-      const overlay = document.getElementById('launch-warning-overlay');
-      if (overlay) {
-        overlay.style.transition = 'opacity 0.5s ease-out';
-        overlay.style.opacity = '0';
-        overlay.style.pointerEvents = 'none';
-        setTimeout(() => {
-          overlay.style.display = 'none';
-        }, 500);
-      }
-    });
-  }
 
   /* Per-seat model pickers */
   document.querySelectorAll('.seat-clickable').forEach(badge => {
@@ -1447,4 +1470,13 @@ document.addEventListener('DOMContentLoaded', () => {
   Voice.init();
   Vision.init();
   applyFeatureFlags();
+});
+
+// Double check injection in case DOMContentLoaded already fired before this script
+document.addEventListener('click', function (e) {
+  if (e.target && e.target.id === 'accept-warning-btn') {
+    const launchOverlay = document.getElementById('launch-warning-overlay');
+    if (launchOverlay) launchOverlay.style.display = 'none';
+    localStorage.setItem('v1_warning_accepted', 'true');
+  }
 });
