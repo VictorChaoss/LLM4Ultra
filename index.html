@@ -11,7 +11,7 @@
     <style>
         body {
             font-family: 'Inter', sans-serif;
-            background-color: #0F111A;
+            background-color: #030305;
             /* Deep slate background matching the app */
             color: #ffffff;
         }
@@ -73,7 +73,7 @@
             position: absolute;
             border-radius: 50%;
             filter: blur(100px);
-            opacity: 0.07;
+            opacity: 0.03;
             animation: orbFloat var(--d, 20s) ease-in-out infinite alternate;
         }
 
@@ -361,6 +361,85 @@
                 transform: translate(var(--hdx, 20px), var(--hdy, -50px)) scale(1);
             }
         }
+
+        /* ═══ PRISM PROTOTYPE ═══ */
+        .prism-stage {
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            z-index: 0;
+            width: clamp(300px, 90vw, 800px);
+            height: clamp(240px, 85vw, 400px);
+            pointer-events: none;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            opacity: 0.6;
+        }
+
+        .prism-laser {
+            position: absolute;
+            right: 0;
+            top: 50%;
+            width: 50%;
+            height: 3px;
+            background: #ffffff;
+            box-shadow: 0 0 15px 2px #ffffff, 0 0 30px #ffffff, 0 0 50px #ffffff;
+            transform: translateY(-50%);
+            z-index: 1;
+        }
+
+        .prism-spectrum {
+            position: absolute;
+            left: 0;
+            top: 50%;
+            width: 50%;
+            height: 300px;
+            background: linear-gradient(to bottom,
+                    rgba(0, 168, 255, 0) 0%,
+                    rgba(0, 168, 255, 1) 20%,
+                    rgba(0, 255, 136, 1) 40%,
+                    rgba(255, 238, 0, 1) 60%,
+                    rgba(255, 50, 50, 1) 80%,
+                    rgba(255, 50, 50, 0) 100%);
+            /* Triangle pointing right */
+            clip-path: polygon(100% 50%, 0 0, 0 100%);
+            transform: translateY(-50%);
+            z-index: 1;
+            filter: blur(8px) contrast(1.2) drop-shadow(0 0 40px rgba(255, 255, 255, 0.2));
+            opacity: 0.9;
+            mask-image: linear-gradient(to left, rgba(0, 0, 0, 1) 0%, rgba(0, 0, 0, 0) 90%);
+            -webkit-mask-image: linear-gradient(to left, rgba(0, 0, 0, 1) 0%, rgba(0, 0, 0, 0) 90%);
+        }
+
+        .prism-star {
+            position: relative;
+            z-index: 3;
+            width: clamp(80px, 15vw, 120px);
+            height: clamp(80px, 15vw, 120px);
+            filter: drop-shadow(0 0 20px rgba(255, 255, 255, 1)) drop-shadow(0 0 40px rgba(255, 255, 255, 0.6));
+            animation: starPulse 4s ease-in-out infinite alternate;
+        }
+
+        @keyframes starPulse {
+            0% {
+                transform: scale(0.95);
+                filter: drop-shadow(0 0 15px rgba(255, 255, 255, 0.8));
+            }
+
+            100% {
+                transform: scale(1.05);
+                filter: drop-shadow(0 0 35px rgba(255, 255, 255, 1)) drop-shadow(0 0 70px rgba(255, 255, 255, 0.8));
+            }
+        }
+
+        /* ═══ MOBILE: dim prism so text stays readable ═══ */
+        @media (max-width: 768px) {
+            .prism-stage {
+                opacity: 0.25;
+            }
+        }
     </style>
 </head>
 
@@ -397,18 +476,25 @@
         <section
             class="text-center space-y-6 pt-16 md:pt-24 pb-12 relative min-h-[350px] flex flex-col items-center justify-center">
 
-            <!-- 3D Animated Logo BEHIND text -->
-            <div class="hero-logo-stage" id="heroLogoStage"
-                style="position:absolute; top:50%; left:50%; transform:translate(-50%,-50%); z-index:0; width:clamp(240px, 85vw, 340px); height:clamp(240px, 85vw, 340px); opacity:0.35; pointer-events:none;">
-                <div class="hero-logo-cube" id="heroLogoCube" style="animation: heroHover 6s ease-in-out infinite;">
-                </div>
+            <!-- Prism Prototype Design BEHIND text -->
+            <div class="prism-stage">
+                <!-- Spectrum spreading out to the left -->
+                <div class="prism-spectrum"></div>
+                <!-- 4-pointed Star -->
+                <svg viewBox="0 0 100 100" class="prism-star">
+                    <path d="M50 0 C53 40 60 47 100 50 C60 53 53 60 50 100 C47 60 40 53 0 50 C40 47 47 40 50 0 Z"
+                        fill="#ffffff" />
+                </svg>
+                <!-- Laser beam coming from the right -->
+                <div class="prism-laser"></div>
             </div>
 
             <h1 class="text-5xl md:text-7xl font-extrabold gradient-text tracking-tight uppercase relative z-10 px-4">
                 LLM4 Roundtable
             </h1>
             <p class="text-gray-400 text-lg md:text-xl max-w-2xl mx-auto relative z-10 px-4">
-                Watch the world's most advanced AI models debate autonomously in real-time.
+                Watch the world's most advanced AI models debate, collaborate, and reach consensus in real-time. 6
+                debate modes. Research rounds. Voice output. All free with your own API key.
             </p>
         </section>
 
@@ -471,9 +557,11 @@
                 <!-- 8 Model Grid -->
                 <div class="grid grid-cols-2 md:grid-cols-4 gap-4">
                     <!-- ChatGPT -->
-                    <div class="flex flex-col items-center gap-3 p-6 rounded-xl border border-white/5 bg-white/5 hover:bg-white/10 hover:border-teal-500/50 transition-all duration-300 shadow-lg group">
-                        <div class="w-16 h-16 rounded-full bg-gradient-to-br from-[#10a37f] to-[#0d8a6b] flex items-center justify-center text-white text-2xl shadow-lg group-hover:scale-110 transition-transform">
-                            <i class="fa-solid fa-bolt"></i>
+                    <div
+                        class="flex flex-col items-center gap-3 p-6 rounded-xl border border-white/5 bg-white/5 hover:bg-white/10 hover:border-teal-500/50 transition-all duration-300 shadow-lg group">
+                        <div
+                            class="w-16 h-16 rounded-full overflow-hidden shadow-lg group-hover:scale-110 transition-transform">
+                            <img src="gpt_logo_round.png" alt="ChatGPT" class="w-full h-full object-cover">
                         </div>
                         <div class="text-center">
                             <span class="block font-bold text-white tracking-wide">ChatGPT</span>
@@ -482,9 +570,11 @@
                     </div>
 
                     <!-- Claude -->
-                    <div class="flex flex-col items-center gap-3 p-6 rounded-xl border border-white/5 bg-white/5 hover:bg-white/10 hover:border-orange-500/50 transition-all duration-300 shadow-lg group">
-                        <div class="w-16 h-16 rounded-full bg-gradient-to-br from-[#d97757] to-[#c16345] flex items-center justify-center text-white text-2xl shadow-lg group-hover:scale-110 transition-transform">
-                            <i class="fa-solid fa-brain"></i>
+                    <div
+                        class="flex flex-col items-center gap-3 p-6 rounded-xl border border-white/5 bg-white/5 hover:bg-white/10 hover:border-orange-500/50 transition-all duration-300 shadow-lg group">
+                        <div
+                            class="w-16 h-16 rounded-full overflow-hidden shadow-lg group-hover:scale-110 transition-transform">
+                            <img src="claude_logo_round.png" alt="Claude" class="w-full h-full object-cover">
                         </div>
                         <div class="text-center">
                             <span class="block font-bold text-white tracking-wide">Claude</span>
@@ -493,12 +583,11 @@
                     </div>
 
                     <!-- Gemini -->
-                    <div class="flex flex-col items-center gap-3 p-6 rounded-xl border border-white/5 bg-white/5 hover:bg-white/10 hover:border-blue-500/50 transition-all duration-300 shadow-lg group">
-                        <div class="w-16 h-16 rounded-full bg-gradient-to-br from-[#1a73e8] to-[#8ab4f8] flex items-center justify-center text-white text-2xl shadow-lg group-hover:scale-110 transition-transform">
-                            <svg viewBox="0 0 24 24" width="28" height="28">
-                                <path fill="currentColor"
-                                    d="M11.967 3.061c.14-.389.684-.389.824 0 1.085 3.012 3.42 5.347 6.432 6.432.389.14.389.684 0 .824-3.012 1.085-5.347 3.42-6.432 6.432-.14.389-.684.389-.824 0-1.085-3.012-3.42-5.347-6.432-6.432-.389-.14-.389-.684 0-.824 3.012-1.085 5.347-3.42 6.432-6.432-.389-.14-.389-.684 0-.824 3.012-1.085 5.347-3.42 6.432-6.432z" />
-                            </svg>
+                    <div
+                        class="flex flex-col items-center gap-3 p-6 rounded-xl border border-white/5 bg-white/5 hover:bg-white/10 hover:border-blue-500/50 transition-all duration-300 shadow-lg group">
+                        <div
+                            class="w-16 h-16 rounded-full overflow-hidden shadow-lg group-hover:scale-110 transition-transform">
+                            <img src="gemini_logo_round.png" alt="Gemini" class="w-full h-full object-cover">
                         </div>
                         <div class="text-center">
                             <span class="block font-bold text-white tracking-wide">Gemini</span>
@@ -506,9 +595,24 @@
                         </div>
                     </div>
 
+                    <!-- Grok -->
+                    <div
+                        class="flex flex-col items-center gap-3 p-6 rounded-xl border border-white/5 bg-white/5 hover:bg-white/10 hover:border-indigo-400/50 transition-all duration-300 shadow-lg group">
+                        <div
+                            class="w-16 h-16 rounded-full overflow-hidden shadow-lg group-hover:scale-110 transition-transform">
+                            <img src="grok_logo_round.png" alt="Grok" class="w-full h-full object-cover">
+                        </div>
+                        <div class="text-center">
+                            <span class="block font-bold text-white tracking-wide">Grok</span>
+                            <span class="block text-xs text-gray-400 uppercase font-semibold mt-1">xAI</span>
+                        </div>
+                    </div>
+
                     <!-- Llama -->
-                    <div class="flex flex-col items-center gap-3 p-6 rounded-xl border border-white/5 bg-white/5 hover:bg-white/10 hover:border-indigo-400/50 transition-all duration-300 shadow-lg group">
-                        <div class="w-16 h-16 rounded-full bg-gradient-to-br from-[#4f46e5] to-[#312e81] flex items-center justify-center text-white text-2xl shadow-lg group-hover:scale-110 transition-transform">
+                    <div
+                        class="flex flex-col items-center gap-3 p-6 rounded-xl border border-white/5 bg-white/5 hover:bg-white/10 hover:border-indigo-400/50 transition-all duration-300 shadow-lg group">
+                        <div
+                            class="w-16 h-16 rounded-full bg-gradient-to-br from-[#4f46e5] to-[#312e81] flex items-center justify-center text-white text-2xl shadow-lg group-hover:scale-110 transition-transform">
                             <i class="fa-solid fa-code-merge"></i>
                         </div>
                         <div class="text-center">
@@ -517,20 +621,11 @@
                         </div>
                     </div>
 
-                    <!-- Grok -->
-                    <div class="flex flex-col items-center gap-3 p-6 rounded-xl border border-white/5 bg-white/5 hover:bg-white/10 hover:border-gray-400/50 transition-all duration-300 shadow-lg group">
-                        <div class="w-16 h-16 rounded-full bg-gradient-to-br from-[#333] to-[#000] flex items-center justify-center text-white text-2xl shadow-lg border border-gray-700 group-hover:scale-110 transition-transform">
-                            <i class="fa-brands fa-x-twitter"></i>
-                        </div>
-                        <div class="text-center">
-                            <span class="block font-bold text-white tracking-wide">Grok</span>
-                            <span class="block text-xs text-gray-400 uppercase font-semibold mt-1">xAI</span>
-                        </div>
-                    </div>
-
                     <!-- DeepSeek -->
-                    <div class="flex flex-col items-center gap-3 p-6 rounded-xl border border-white/5 bg-white/5 hover:bg-white/10 hover:border-cyan-400/50 transition-all duration-300 shadow-lg group">
-                        <div class="w-16 h-16 rounded-full bg-gradient-to-br from-[#06b6d4] to-[#164e63] flex items-center justify-center text-white text-2xl shadow-lg group-hover:scale-110 transition-transform">
+                    <div
+                        class="flex flex-col items-center gap-3 p-6 rounded-xl border border-white/5 bg-white/5 hover:bg-white/10 hover:border-cyan-400/50 transition-all duration-300 shadow-lg group">
+                        <div
+                            class="w-16 h-16 rounded-full bg-gradient-to-br from-[#06b6d4] to-[#164e63] flex items-center justify-center text-white text-2xl shadow-lg group-hover:scale-110 transition-transform">
                             <i class="fa-solid fa-network-wired"></i>
                         </div>
                         <div class="text-center">
@@ -540,8 +635,10 @@
                     </div>
 
                     <!-- Mistral -->
-                    <div class="flex flex-col items-center gap-3 p-6 rounded-xl border border-white/5 bg-white/5 hover:bg-white/10 hover:border-amber-400/50 transition-all duration-300 shadow-lg group">
-                        <div class="w-16 h-16 rounded-full bg-gradient-to-br from-[#f59e0b] to-[#78350f] flex items-center justify-center text-white text-2xl shadow-lg group-hover:scale-110 transition-transform">
+                    <div
+                        class="flex flex-col items-center gap-3 p-6 rounded-xl border border-white/5 bg-white/5 hover:bg-white/10 hover:border-amber-400/50 transition-all duration-300 shadow-lg group">
+                        <div
+                            class="w-16 h-16 rounded-full bg-gradient-to-br from-[#f59e0b] to-[#78350f] flex items-center justify-center text-white text-2xl shadow-lg group-hover:scale-110 transition-transform">
                             <i class="fa-solid fa-wind"></i>
                         </div>
                         <div class="text-center">
@@ -551,8 +648,10 @@
                     </div>
 
                     <!-- Qwen -->
-                    <div class="flex flex-col items-center gap-3 p-6 rounded-xl border border-white/5 bg-white/5 hover:bg-white/10 hover:border-pink-400/50 transition-all duration-300 shadow-lg group">
-                        <div class="w-16 h-16 rounded-full bg-gradient-to-br from-[#ec4899] to-[#831843] flex items-center justify-center text-white text-2xl shadow-lg group-hover:scale-110 transition-transform">
+                    <div
+                        class="flex flex-col items-center gap-3 p-6 rounded-xl border border-white/5 bg-white/5 hover:bg-white/10 hover:border-pink-400/50 transition-all duration-300 shadow-lg group">
+                        <div
+                            class="w-16 h-16 rounded-full bg-gradient-to-br from-[#ec4899] to-[#831843] flex items-center justify-center text-white text-2xl shadow-lg group-hover:scale-110 transition-transform">
                             <i class="fa-solid fa-cube"></i>
                         </div>
                         <div class="text-center">
@@ -561,6 +660,33 @@
                         </div>
                     </div>
                 </div>
+            </div>
+        </section>
+
+        <!-- Feature Comparison Table -->
+        <section class="border-t border-white/10 pt-16">
+            <div class="max-w-4xl mx-auto space-y-10">
+                <div class="text-center">
+                    <h2 class="text-3xl font-bold text-white uppercase tracking-tight mb-4">Why LLM4?</h2>
+                    <p class="text-gray-400">The only platform where AI models actually talk to each other.</p>
+                </div>
+
+                <div class="glass-panel rounded-2xl overflow-hidden border border-white/10">
+                    <!-- Table header -->
+                    <div
+                        class="grid grid-cols-5 bg-white/5 border-b border-white/10 text-xs font-bold uppercase tracking-widest">
+                        <div class="col-span-2 p-4 text-gray-400">Feature</div>
+                        <div class="p-4 text-center text-gray-400">ChatHub</div>
+                        <div class="p-4 text-center text-gray-400">LMArena</div>
+                        <div class="p-4 text-center text-indigo-400">LLM4 ✦</div>
+                    </div>
+
+                    <!-- Rows -->
+                    <div id="compare-rows"></div>
+                </div>
+
+                <p class="text-center text-gray-500 text-xs">✅ Available &nbsp;&nbsp; ❌ Not available &nbsp;&nbsp; 🔜
+                    Coming soon</p>
             </div>
         </section>
 
@@ -653,23 +779,35 @@
 
                 <div class="text-left pt-4 space-y-6">
                     <div>
-                        <h3 class="text-xl font-bold text-white mb-2">Phase 1: V1 Trial Phase (Current)</h3>
-                        <p class="text-gray-400">The current build of the LLM4 AI Roundtable is a <span
-                                class="text-white font-semibold flex-inline items-center gap-2"><span
-                                    class="bg-indigo-500/20 text-indigo-400 text-xs px-2 py-0.5 rounded border border-indigo-500/30">Version
-                                    1.0</span></span>. This is an initial proof-of-concept running on a live
-                            API.
-                        </p>
+                        <h3 class="text-xl font-bold text-white mb-2">Phase 1: V1 → V5 — Shipped <span
+                                class="bg-green-500/20 text-green-400 text-xs px-2 py-0.5 rounded border border-green-500/30">LIVE</span>
+                        </h3>
+                        <p class="text-gray-400">The LLM4 Roundtable is fully live, running on a real API with 8 AI
+                            models. Key features shipped in v5.8:</p>
+                        <ul class="mt-3 space-y-2 text-gray-400 text-sm ml-4 border-l-2 border-indigo-500/30 pl-4">
+                            <li><span class="text-white font-semibold">💬 6 Debate Modes</span> — Free, Collaborate,
+                                Devil's Advocate, Steelman, Oxford, First Principles</li>
+                            <li><span class="text-white font-semibold">🔍 Research Round</span> — agents web-search the
+                                topic before debating, grounding arguments in real data</li>
+                            <li><span class="text-white font-semibold">✦ Custom Personas</span> — override any seat's
+                                system prompt to create your own AI role</li>
+                            <li><span class="text-white font-semibold">👍 Reactions</span> — vote on individual AI
+                                responses; tallies feed into Consensus scoring</li>
+                            <li><span class="text-white font-semibold">⚡ Speed Slider</span> — control pacing from
+                                rapid-fire to slow, deliberate debate</li>
+                            <li><span class="text-white font-semibold">🎙 Voice I/O</span> — Text-to-speech output and
+                                speech-to-text input built in</li>
+                        </ul>
                     </div>
 
                     <div>
-                        <h3 class="text-xl font-bold text-white mb-2">Phase 2: Account Connectivity & Mobile App</h3>
-                        <p class="text-gray-400">As the ecosystem grows and stabilizes, we will introduce a dedicated
-                            <span class="text-white font-semibold">Mobile App</span> alongside an email connect system.
-                            This will allow users to save
-                            their transcripts on-the-go, track their debate histories, and customize their agent prompts
-                            without relying on the early beta web framework.
-                        </p>
+                        <h3 class="text-xl font-bold text-white mb-2">Phase 2: Account Connectivity &amp; Mobile App
+                            <span
+                                class="bg-indigo-500/20 text-indigo-400 text-xs px-2 py-0.5 rounded border border-indigo-500/30">NEXT</span>
+                        </h3>
+                        <p class="text-gray-400">Dedicated <span class="text-white font-semibold">Mobile App</span>
+                            alongside email/wallet connect so users can save transcripts, track debate histories, and
+                            pick up mid-debate on any device.</p>
                     </div>
 
                     <div>
@@ -679,32 +817,25 @@
                             reach our permanent solution: <span class="text-white font-semibold">Full Browser Access and
                                 LLM4 Extensions.</span></p>
                         <p class="text-gray-400 mt-2 pb-4">This means the power of the multi-agent roundtable will
-                            eventually
-                            live directly in your browser, allowing you to highlight text anywhere on the web, summon
-                            the roundtable, and automatically deploy the perfected solution. Key extension features will
-                            include:</p>
+                            eventually live directly in your browser, allowing you to highlight text anywhere on the
+                            web, summon
+                            the roundtable, and automatically deploy the perfected solution.</p>
                         <ul class="space-y-3 text-gray-400 text-sm ml-4 border-l-2 border-indigo-500/30 pl-4">
                             <li><span class="text-white font-semibold flex items-center gap-2"><i
                                         class="fa-solid fa-ghost text-indigo-400"></i> "Invisible" Ghostwriting</span>
-                                Draft notes in any input box (X, Discord, Emails) and hit a hotkey to have the
-                                roundtable seamlessly debate and replace it with a perfected synthesis.</li>
+                                Draft in any input box and hit a hotkey to have the roundtable debate and replace it
+                                seamlessly.</li>
                             <li><span class="text-white font-semibold flex items-center gap-2"><i
                                         class="fa-solid fa-shield-halved text-indigo-400"></i> Real-Time Fact
-                                    Consensus</span> Toggle "Auto-Debunk" while reading articles or threads to have the
-                                council passively scan, cross-reference, and highlight contradictions or biases.</li>
+                                    Consensus</span> Toggle "Auto-Debunk" to passively scan articles and highlight
+                                contradictions.</li>
                             <li><span class="text-white font-semibold flex items-center gap-2"><i
                                         class="fa-solid fa-magnifying-glass-chart text-indigo-400"></i> Competitor
-                                    X-Ray</span> Scan complex smart contracts, whitepapers, or landing pages for the
-                                roundtable to instantly output a multi-perspective breakdown of strategic flaws and
-                                vulnerabilities.</li>
+                                    X-Ray</span> Scan smart contracts or whitepapers for a multi-perspective breakdown
+                                of strategic flaws.</li>
                             <li><span class="text-white font-semibold flex items-center gap-2"><i
                                         class="fa-solid fa-sliders text-indigo-400"></i> Dynamic Council Weights</span>
-                                Swap completely different model versions mid-debate and adjust the influence of each
-                                seat.</li>
-                            <li><span class="text-white font-semibold flex items-center gap-2"><i
-                                        class="fa-solid fa-volume-high text-indigo-400"></i> Live Audio Output</span>
-                                Turn on text-to-speech to have the extension read the debated, finalized output aloud to
-                                you in real-time as you work.</li>
+                                Swap model versions mid-debate and adjust each seat's influence.</li>
                         </ul>
 
                         <div class="mt-12 pt-8 border-t border-white/10 text-center">
@@ -752,9 +883,8 @@
         (function () {
             const LOGO = 'logo_3d.png';
             const cube = document.getElementById('heroLogoCube');
-            const stage = document.getElementById('heroLogoStage');
+            if (!cube) return; // Element not present on this page — skip safely
 
-            // Depth layers
             [13, 11, 9, 7, 5, 3, 1, -1, -3].forEach(z => {
                 const d = document.createElement('div');
                 d.className = 'edge-layer';
@@ -765,34 +895,95 @@
                 cube.appendChild(d);
             });
 
-            // Front face
             const front = document.createElement('div');
             front.className = 'face-front';
             const fi = document.createElement('img');
+            fi.src = LOGO;
+            front.appendChild(fi);
+            cube.appendChild(front);
+
+            const light = document.createElement('div');
+            light.className = 'light-fx';
+            cube.appendChild(light);
+        })();
+
+
+        // ═══ COPY CA ═══
+        function copyLandingCA() {
+            const ca = document.getElementById('landing-ca').innerText;
+            navigator.clipboard.writeText(ca).then(() => {
                 const btnText = document.getElementById('copy-landing-text');
                 const btnIcon = btnText.previousElementSibling;
                 const panel = btnText.closest('.glass-panel');
-
                 const originalText = btnText.innerText;
                 const originalIcon = btnIcon.className;
-
-                // Set Copied State
                 btnText.innerText = 'Copied!';
                 btnIcon.className = 'fa-solid fa-check';
                 panel.classList.add('ca-copied-anim');
-
-                // Revert after 1.5s (matching animation duration)
                 setTimeout(() => {
                     btnText.innerText = originalText;
                     btnIcon.className = originalIcon;
                     panel.classList.remove('ca-copied-anim');
                 }, 1500);
-
-            }).catch(err => {
-                console.error('Failed to copy text: ', err);
-            });
+            }).catch(err => console.error('Failed to copy text: ', err));
         }
-    </script>
+
+        // ═══ FEATURE COMPARISON TABLE ═══
+        (function () {
+            const ROWS = [
+                ['Sequential debate (models react to each other)', '❌', '❌', '✅'],
+                ['Agent name-awareness (models reference each other)', '❌', '❌', '✅'],
+                ['6 structured debate modes', '❌', '❌', '✅'],
+                ['Research round (web search before debating)', '❌', '❌', '✅'],
+                ['Consensus & synthesis after every round', '❌', '❌', '✅'],
+                ['Emergent reasoning pipeline', '❌', '❌', '🔜'],
+                ['Auto-Rater / AI judge leaderboard', '❌', '✅', '🔜'],
+                ['Voice output (TTS)', '❌', '❌', '✅'],
+                ['Voice input (STT)', '❌', '❌', '✅'],
+                ['Image / Vision input', '✅', '✅', '✅'],
+                ['Multi-provider (10+ options)', '✅', '❌', '✅'],
+                ['Export transcript', '❌', '❌', '✅'],
+                ['Auto-pilot mode', '❌', '❌', '✅'],
+                ['Free with your own API key', '✅', '❌', '✅'],
+            ];
+
+            const CELL = { '✅': 'text-emerald-400', '❌': 'text-gray-600', '🔜': 'text-indigo-400' };
+
+            const container = document.getElementById('compare-rows');
+            ROWS.forEach(([feature, chathub, lmarena, llm4], i) => {
+                const row = document.createElement('div');
+                row.className = `grid grid-cols-5 border-b border-white/5 text-sm transition-colors hover:bg-white/5 ${i % 2 === 0 ? '' : 'bg-white/[0.02]'}`;
+                row.style.opacity = '0';
+                row.style.transform = 'translateY(6px)';
+                row.style.transition = `opacity 0.35s ${i * 0.04}s, transform 0.35s ${i * 0.04}s`;
+
+                const cell = (val, span = 1, extra = '') =>
+                    `<div class="col-span-${span} p-4 ${extra}">${val}</div>`;
+                const icon = (val) =>
+                    `<div class="p-4 text-center text-xl ${CELL[val] || 'text-gray-400'}">${val}</div>`;
+
+                row.innerHTML =
+                    cell(feature, 2, 'text-gray-300 font-medium') +
+                    icon(chathub) +
+                    icon(lmarena) +
+                    `<div class="p-4 text-center text-xl font-bold ${CELL[llm4] || 'text-gray-400'} relative">
+                        ${llm4}
+                        ${llm4 === '✅' ? '<span class="absolute inset-0 bg-emerald-500/5 rounded"></span>' : ''}
+                    </div>`;
+
+                container.appendChild(row);
+
+                // Animate in on scroll
+                const observer = new IntersectionObserver(entries => {
+                    if (entries[0].isIntersecting) {
+                        row.style.opacity = '1';
+                        row.style.transform = 'translateY(0)';
+                        observer.disconnect();
+                    }
+                }, { threshold: 0.1 });
+                observer.observe(row);
+            });
+        })();</script>
 </body>
 
 </html>

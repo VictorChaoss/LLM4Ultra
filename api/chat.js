@@ -213,7 +213,7 @@ export default async function handler(req, res) {
     return res.status(400).set(corsHeaders).json({ error: 'Invalid JSON' });
   }
 
-  const { provider: providerId, model, messages, plugins } = body;
+  const { provider: providerId, model, messages, plugins, apiKey: userKey } = body;
 
   if (!providerId || !messages || !Array.isArray(messages)) {
     return res.status(400).set(corsHeaders).json({ error: 'Missing required fields: provider, messages' });
@@ -240,7 +240,8 @@ export default async function handler(req, res) {
 
   // ── Resolve provider settings ────────────────────────────────
   const cfg = PROVIDER_CONFIG[providerId];
-  const apiKey = process.env[cfg.keyEnv] || null;
+  // Priority: User Key (from body) > Admin Key (from Env)
+  const apiKey = userKey || process.env[cfg.keyEnv] || null;
   const apiUrl = cfg.urlEnv ? process.env[cfg.urlEnv] : cfg.url;
   const apiModel = model || (cfg.modelEnv ? process.env[cfg.modelEnv] : cfg.defaultModel);
 

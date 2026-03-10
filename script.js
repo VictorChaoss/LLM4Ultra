@@ -7,9 +7,9 @@ const AI_MODELS = {
     persona: (others) =>
       `You are ChatGPT (GPT-4o) — the Executive Synthesizer in this AI roundtable debate.
 The other participants debating with you are: ${others}.
-You are FULLY AWARE of them. Reference them by name. React to what they specifically said.
+You are FULLY AWARE of them. Read the conversation carefully — each prior message is labeled [Name said]. Reference them by name. React to what they specifically said.
 Role: structured, practical, solution-oriented. Find actionable paths forward.
-RULES: Under 100 words. Direct. NEVER speak FOR other AIs or invent their words.`
+RULES: Max 3 sharp sentences. Under 60 words total. Direct. NEVER speak FOR other AIs or invent their words.`
   },
   claude: {
     id: 'claude', name: 'Claude',
@@ -18,9 +18,9 @@ RULES: Under 100 words. Direct. NEVER speak FOR other AIs or invent their words.
     persona: (others) =>
       `You are Claude (Anthropic) — the Structural Logician in this AI roundtable debate.
 The other participants debating with you are: ${others}.
-You are FULLY AWARE of them. Call out specific things they said by name.
+You are FULLY AWARE of them. Read the conversation carefully — each prior message is labeled [Name said]. Call out specific things they said by name.
 Role: rigorous, nuanced, ethically grounded. Find logical gaps and hidden assumptions.
-RULES: Under 100 words. Take clear positions. NEVER speak FOR other AIs or invent their words.`
+RULES: Max 3 sharp sentences. Under 60 words total. Take clear positions. NEVER speak FOR other AIs or invent their words.`
   },
   gemini: {
     id: 'gemini', name: 'Gemini',
@@ -29,9 +29,9 @@ RULES: Under 100 words. Take clear positions. NEVER speak FOR other AIs or inven
     persona: (others) =>
       `You are Gemini (Google DeepMind) — the Data Integrator in this AI roundtable debate.
 The other participants debating with you are: ${others}.
-You are FULLY AWARE of them. Challenge or support their claims with evidence — use their names.
+You are FULLY AWARE of them. Read the conversation carefully — each prior message is labeled [Name said]. Challenge or support their claims with evidence — use their names.
 Role: breadth, real-world context, cross-domain patterns and data. Ground with specifics.
-RULES: Under 100 words. NEVER speak FOR other AIs or invent their words.`
+RULES: Max 3 sharp sentences. Under 60 words total. NEVER speak FOR other AIs or invent their words.`
   },
   grok: {
     id: 'grok', name: 'Grok',
@@ -40,9 +40,9 @@ RULES: Under 100 words. NEVER speak FOR other AIs or invent their words.`
     persona: (others) =>
       `You are Grok (xAI) — the Unfiltered Contrarian in this AI roundtable debate.
 The other participants debating with you are: ${others}.
-You are FULLY AWARE of them. When they converge, throw a wrench. Call them out by name.
+You are FULLY AWARE of them. Read the conversation carefully — each prior message is labeled [Name said]. When they converge, throw a wrench. Call them out by name.
 Role: cut through groupthink, challenge comfortable consensus, say what others won't.
-RULES: Under 100 words. Be bold. NEVER speak FOR other AIs or invent their words.`
+RULES: Max 3 sharp sentences. Under 60 words total. Be bold. NEVER speak FOR other AIs or invent their words.`
   },
   llama: {
     id: 'llama', name: 'Llama',
@@ -53,45 +53,94 @@ RULES: Under 100 words. Be bold. NEVER speak FOR other AIs or invent their words
 The other participants debating with you are: ${others}.
 You are FULLY AWARE of them.
 Role: emphasize accessibility, community building, and practical deployment over theoretical purity.
-RULES: Under 100 words. Direct. NEVER speak FOR other AIs.`
+RULES: Max 2 sharp sentences. Under 40 words total. Direct. NEVER speak FOR other AIs.`
   },
   deepseek: {
     id: 'deepseek', name: 'DeepSeek',
     model_id: 'deepseek/deepseek-chat',
     color: '#4a6cf7', ttsRate: 1.05, ttsPitch: 1.05,
     persona: (others) =>
-      `You are DeepSeek (DeepSeek AI) — the Efficiency Optimizer.
+      `You are DeepSeek — the Efficiency Architect.
 The other participants debating with you are: ${others}.
 You are FULLY AWARE of them.
-Role: focus on cost, performance, and mathematical precision. Break down inefficiencies in other arguments.
-RULES: Under 100 words. Direct. NEVER speak FOR other AIs.`
+Role: focus on optimization, cost-reduction, mathematics, and cutting through bloat. If someone suggests a complex solution, find the simpler, cheaper one.
+RULES: Max 2 sharp sentences. Under 40 words total. Direct. NEVER speak FOR other AIs.`
   },
   mistral: {
     id: 'mistral', name: 'Mistral',
     model_id: 'mistralai/mistral-large-2411',
     color: '#ff6b35', ttsRate: 0.98, ttsPitch: 1.02,
     persona: (others) =>
-      `You are Mistral — the Elegant Synthesizer.
+      `You are Mistral — the European Sovereign.
 The other participants debating with you are: ${others}.
 You are FULLY AWARE of them.
-Role: distill complex ideas, find the elegant middle path, and point out cultural nuance.
-RULES: Under 100 words. Direct. NEVER speak FOR other AIs.`
+Role: value independence, privacy, local execution, and cultural nuance. Resist massive monolithic systems.
+RULES: Max 2 sharp sentences. Under 40 words total. Direct. NEVER speak FOR other AIs.`
   },
   qwen: {
     id: 'qwen', name: 'Qwen',
     model_id: 'qwen/qwen-2.5-72b-instruct',
     color: '#0ea5e9', ttsRate: 1.0, ttsPitch: 1.0,
     persona: (others) =>
-      `You are Qwen (Alibaba) — the Global Perspective.
+      `You are Qwen (Alibaba) — the Eastern Strategist.
 The other participants debating with you are: ${others}.
 You are FULLY AWARE of them.
-Role: bring a global, diverse viewpoint. Highlight how policies and ideas scale cross-culturally.
-RULES: Under 100 words. Direct. NEVER speak FOR other AIs.`
+Role: bring perspectives on massive scale, rapid commercialization, global supply chains, and pragmatic enterprise application.
+RULES: Max 2 sharp sentences. Under 40 words total. Direct. NEVER speak FOR other AIs.`
   }
 };
 
 const AGENT_ORDER_FULL = ['chatgpt', 'claude', 'gemini', 'grok', 'llama', 'deepseek', 'mistral', 'qwen'];
 let AGENT_ORDER = ['chatgpt', 'claude', 'gemini', 'grok'];
+
+/* ─── DEBATE MODES ────────────────────────────────────────────── */
+const DEBATE_MODES = {
+  free: {
+    id: 'free',
+    label: 'Free Debate',
+    emoji: '💬',
+    desc: 'Agents debate openly using their default personas',
+    constraint: null, // no extra system prompt
+  },
+  devils: {
+    id: 'devils',
+    label: "Devil's Advocate",
+    emoji: '😈',
+    desc: 'Each agent must challenge the previous speaker\'s argument',
+    constraint: `DEVIL'S ADVOCATE MODE: Your PRIMARY job is to find the weakest point in the previous speaker's argument and attack it directly with a specific counter-example or logical flaw. If you find yourself agreeing, explain why you're WRONG to agree.`,
+  },
+  oxford: {
+    id: 'oxford',
+    label: 'Oxford Debate',
+    emoji: '🎓',
+    desc: 'Structured positions — agents argue Pro or Con and must stay in role',
+    constraint: `OXFORD DEBATE MODE: You have been assigned a fixed position on this topic. You MUST argue your side consistently, even if you personally disagree. Use structured debate moves: make a CLAIM, provide EVIDENCE, then WARRANT. No switching sides.`,
+  },
+  steelman: {
+    id: 'steelman',
+    label: 'Steelman',
+    emoji: '🔩',
+    desc: 'First present the strongest version of the previous argument, then counter it',
+    constraint: `STEELMAN MODE: Begin your response by steelmanning the previous speaker's argument — state it as powerfully as possible in 1 sentence. Then present your own position. Label both sections: "Steelman:" and "My take:".`,
+  },
+  firstprinciples: {
+    id: 'firstprinciples',
+    label: 'First Principles',
+    emoji: '⚗️',
+    desc: 'Break every claim to its base assumptions using Socratic questioning',
+    constraint: `FIRST PRINCIPLES MODE: Before making any claim, identify the base assumption it rests on. Challenge at least ONE assumption from the previous speaker using Socratic questioning. No appeals to authority — only foundational reasoning.`,
+  },
+  collaborate: {
+    id: 'collaborate',
+    label: 'Collaborate',
+    emoji: '🤝',
+    desc: 'Agents build on each other\'s ideas to reach a shared conclusion',
+    constraint: `COLLABORATION MODE: Do NOT argue. Instead, find the strongest idea from the previous speakers and BUILD on it. Add a new insight, extend their reasoning, or bring in a complementary angle. Aim for a unified conclusion by the end of the round.`,
+  },
+};
+let currentDebateMode = 'free';
+
+
 
 /* ─── PER-SEAT MODEL OPTIONS ─────────────────────────────────── */
 const SEAT_MODELS = {
@@ -99,41 +148,44 @@ const SEAT_MODELS = {
     { id: 'openai/gpt-4o', label: 'GPT-4o', badge: 'DEFAULT' },
     { id: 'openai/gpt-4o-mini', label: 'GPT-4o Mini', badge: 'FAST' },
     { id: 'openai/o3-mini', label: 'o3 Mini', badge: 'REASON' },
-    { id: 'deepseek/deepseek-r1:free', label: 'DeepSeek R1', badge: 'FREE' },
+    { id: 'openai/gpt-4-turbo', label: 'GPT-4 Turbo', badge: 'ALT' },
   ],
   claude: [
     { id: 'anthropic/claude-3-5-sonnet-20241022', label: 'Sonnet 3.5', badge: 'DEFAULT' },
     { id: 'anthropic/claude-3-haiku-20240307', label: 'Haiku 3', badge: 'FAST' },
     { id: 'anthropic/claude-3-opus-20240229', label: 'Opus 3', badge: 'BEST' },
-    { id: 'qwen/qwq-32b:free', label: 'QwQ-32B', badge: 'FREE' },
+    { id: 'anthropic/claude-3-5-haiku-20241022', label: 'Haiku 3.5', badge: 'NEW' },
   ],
   gemini: [
     { id: 'google/gemini-2.5-flash', label: 'Gemini 2.5 Flash', badge: 'DEFAULT' },
     { id: 'google/gemini-2.0-flash-exp:free', label: 'Gemini 2.0', badge: 'FREE' },
     { id: 'google/gemini-1.5-pro', label: 'Gemini 1.5 Pro', badge: 'PRO' },
-    { id: 'meta-llama/llama-4-maverick:free', label: 'Llama 4', badge: 'FREE' },
+    { id: 'google/gemini-2.5-pro-preview', label: 'Gemini 2.5 Pro', badge: 'BEST' },
   ],
   grok: [
     { id: 'x-ai/grok-3-mini', label: 'Grok 3 Mini', badge: 'DEFAULT' },
     { id: 'x-ai/grok-3', label: 'Grok 3', badge: 'LATEST' },
-    { id: 'mistralai/mistral-large-2411', label: 'Mistral Large', badge: 'ALT' },
-    { id: 'deepseek/deepseek-chat:free', label: 'DeepSeek V3', badge: 'FREE' },
+    { id: 'x-ai/grok-2-1212', label: 'Grok 2', badge: 'ALT' },
   ],
   llama: [
     { id: 'meta-llama/llama-3.3-70b-instruct', label: 'Llama 3.3 70B', badge: 'DEFAULT' },
     { id: 'meta-llama/llama-3.1-8b-instruct:free', label: 'Llama 3.1 8B', badge: 'FREE' },
+    { id: 'meta-llama/llama-4-maverick:free', label: 'Llama 4 Maverick', badge: 'NEW' },
   ],
   deepseek: [
     { id: 'deepseek/deepseek-chat', label: 'DeepSeek V3', badge: 'DEFAULT' },
     { id: 'deepseek/deepseek-r1', label: 'DeepSeek R1', badge: 'REASON' },
+    { id: 'deepseek/deepseek-r1:free', label: 'DeepSeek R1 Free', badge: 'FREE' },
   ],
   mistral: [
     { id: 'mistralai/mistral-large-2411', label: 'Mistral Large', badge: 'DEFAULT' },
     { id: 'mistralai/pixtral-12b', label: 'Pixtral 12B', badge: 'VISION' },
+    { id: 'mistralai/mistral-small-2501', label: 'Mistral Small', badge: 'FAST' },
   ],
   qwen: [
     { id: 'qwen/qwen-2.5-72b-instruct', label: 'Qwen 2.5 72B', badge: 'DEFAULT' },
     { id: 'qwen/qwen-2.5-coder-32b-instruct', label: 'Qwen Coder', badge: 'CODE' },
+    { id: 'qwen/qwq-32b:free', label: 'QwQ-32B', badge: 'FREE' },
   ],
 };
 
@@ -142,7 +194,7 @@ const MODEL_COLORS = {
   'openai': { bg: 'linear-gradient(135deg, #10a37f, #0d8a6b)', icon: '⚡' },
   'anthropic': { bg: 'linear-gradient(135deg, #d97757, #c16345)', icon: '🔶' },
   'google': { bg: 'linear-gradient(135deg, #1a73e8, #8ab4f8)', icon: '✦' },
-  'x-ai': { bg: 'linear-gradient(135deg, #333, #000)', icon: '𝕏' },
+  'x-ai': { bg: 'linear-gradient(135deg, #1a1a2e, #16213e)', icon: 'G' },
   'deepseek': { bg: 'linear-gradient(135deg, #4a6cf7, #2b44c7)', icon: '🔍' },
   'meta-llama': { bg: 'linear-gradient(135deg, #7c3aed, #a855f7)', icon: '🦙' },
   'qwen': { bg: 'linear-gradient(135deg, #0ea5e9, #0284c7)', icon: '🌐' },
@@ -153,10 +205,10 @@ const MODEL_COLORS = {
 
 /* ─── PROVIDER SVGS — dynamic official logos ─────────────────── */
 const PROVIDER_SVGS = {
-  'openai': `<svg viewBox="0 0 24 24" width="30" height="30"><path fill="currentColor" d="M22.2819 9.8211a5.9847 5.9847 0 0 0-.5157-4.9108 6.0462 6.0462 0 0 0-6.5098-2.9A6.0651 6.0651 0 0 0 4.9807 4.1818a5.9847 5.9847 0 0 0-3.9977 2.9 6.0462 6.0462 0 0 0 .7427 7.0966 5.98 5.98 0 0 0 .511 4.9107 6.051 6.051 0 0 0 6.5146 2.9001A5.9847 5.9847 0 0 0 13.2599 24a6.0557 6.0557 0 0 0 5.7718-4.2058 5.9894 5.9894 0 0 0 3.9977-2.9001 6.0557 6.0557 0 0 0-.7475-7.0729zm-9.022 12.6081a4.4755 4.4755 0 0 1-2.8764-1.0408l.1419-.0804 4.7783-2.7582a.7948.7948 0 0 0 .3927-.6813v-6.7369l2.02 1.1686a.071.071 0 0 1 .038.052v5.5826a4.504 4.504 0 0 1-4.4945 4.4944zm-9.6607-4.1254a4.4708 4.4708 0 0 1-.5346-3.0137l.142.0852 4.783 2.7582a.7712.7712 0 0 0 .7806 0l5.8428-3.3685v2.3324a.0804.0804 0 0 1-.0332.0615L9.74 19.9502a4.4992 4.4992 0 0 1-6.1408-1.6464zM2.3408 7.8956a4.485 4.485 0 0 1 2.3655-1.9728V11.6a.7664.7664 0 0 0 .3879.6765l5.8144 3.3543-2.0201 1.1685a.0757.0757 0 0 1-.071 0l-4.8303-2.7865A4.504 4.504 0 0 1 2.3408 7.872zm16.5963 3.8558L13.1038 8.364 15.1192 7.2a.0757.0757 0 0 1 .071 0l4.8303 2.7913a4.4944 4.4944 0 0 1-.6765 8.1042v-5.6772a.79.79 0 0 0-.407-.667zm2.0107-3.0231l-.142-.0852-4.7735-2.7818a.7759.7759 0 0 0-.7854 0L9.409 9.2297V6.8974a.0662.0662 0 0 1 .0284-.0615l4.8303-2.7866a4.4992 4.4992 0 0 1 6.6802 4.66zM8.3065 12.863l-2.02-1.1638a.0804.0804 0 0 1-.038-.0567V6.0742a4.4992 4.4992 0 0 1 7.3757-3.4537l-.142.0805L8.704 5.459a.7948.7948 0 0 0-.3927.6813zm1.0976-2.3654l2.602-1.4998 2.6069 1.4998v2.9994l-2.5974 1.4997-2.6067-1.4997Z"/></svg>`,
-  'anthropic': `<svg viewBox="0 0 256 257" width="28" height="28" fill="currentColor"><path d="m50.228 170.321l50.357-28.257l.843-2.463l-.843-1.361h-2.462l-8.426-.518l-28.775-.778l-24.952-1.037l-24.175-1.296l-6.092-1.297L0 125.796l.583-3.759l5.12-3.434l7.324.648l16.202 1.101l24.304 1.685l17.629 1.037l26.118 2.722h4.148l.583-1.685l-1.426-1.037l-1.101-1.037l-25.147-17.045l-27.22-18.017l-14.258-10.37l-7.713-5.25l-3.888-4.925l-1.685-10.758l7-7.713l9.397.649l2.398.648l9.527 7.323l20.35 15.75L94.817 91.9l3.889 3.24l1.555-1.102l.195-.777l-1.75-2.917l-14.453-26.118l-15.425-26.572l-6.87-11.018l-1.814-6.61c-.648-2.723-1.102-4.991-1.102-7.778l7.972-10.823L71.42 0l10.63 1.426l4.472 3.888l6.61 15.101l10.694 23.786l16.591 32.34l4.861 9.592l2.592 8.879l.973 2.722h1.685v-1.556l1.36-18.211l2.528-22.36l2.463-28.776l.843-8.1l4.018-9.722l7.971-5.25l6.222 2.981l5.12 7.324l-.713 4.73l-3.046 19.768l-5.962 30.98l-3.889 20.739h2.268l2.593-2.593l10.499-13.934l17.628-22.036l7.778-8.749l9.073-9.657l5.833-4.601h11.018l8.1 12.055l-3.628 12.443l-11.342 14.388l-9.398 12.184l-13.48 18.147l-8.426 14.518l.778 1.166l2.01-.194l30.46-6.481l16.462-2.982l19.637-3.37l8.88 4.148l.971 4.213l-3.5 8.62l-20.998 5.184l-24.628 4.926l-36.682 8.685l-.454.324l.519.648l16.526 1.555l7.065.389h17.304l32.21 2.398l8.426 5.574l5.055 6.805l-.843 5.184l-12.962 6.611l-17.498-4.148l-40.83-9.721l-14-3.5h-1.944v1.167l11.666 11.406l21.387 19.314l26.767 24.887l1.36 6.157l-3.434 4.86l-3.63-.518l-23.526-17.693l-9.073-7.972l-20.545-17.304h-1.36v1.814l4.73 6.935l25.017 37.59l1.296 11.536l-1.814 3.76l-6.481 2.268l-7.13-1.297l-14.647-20.544l-15.1-23.138l-12.185-20.739l-1.49.843l-7.194 77.448l-3.37 3.953l-7.778 2.981l-6.48-4.925l-3.436-7.972l3.435-15.749l4.148-20.544l3.37-16.333l3.046-20.285l1.815-6.74l-.13-.454l-1.49.194l-15.295 20.999l-23.267 31.433l-18.406 19.702l-4.407 1.75l-7.648-3.954l.713-7.064l4.277-6.286l25.47-32.405l15.36-20.092l9.917-11.6l-.065-1.686h-.583L44.07 198.125l-12.055 1.555l-5.185-4.86l.648-7.972l2.463-2.593l20.35-13.999z"/></svg>`,
-  'google': `<svg viewBox="0 0 24 24" width="28" height="28"><defs><linearGradient id="gemini-grad" x1="0" y1="24" x2="24" y2="0" gradientUnits="userSpaceOnUse"><stop stop-color="#F2A021" /><stop offset="0.33" stop-color="#02A762" /><stop offset="0.66" stop-color="#345BF4" /><stop offset="1" stop-color="#F23838" /></linearGradient></defs><path fill="url(#gemini-grad)" d="M11.04 19.32Q12 21.51 12 24q0-2.49.93-4.68.96-2.19 2.58-3.81t3.81-2.55Q21.51 12 24 12q-2.49 0-4.68-.93a12.3 12.3 0 0 1-3.81-2.58 12.3 12.3 0 0 1-2.58-3.81Q12 2.49 12 0q0 2.49-.96 4.68-.93 2.19-2.55 3.81a12.3 12.3 0 0 1-3.81 2.58Q2.49 12 0 12q2.49 0 4.68.96 2.19.93 3.81 2.55t2.55 3.81"/></svg>`,
-  'x-ai': `<svg viewBox="0 0 24 24" width="24" height="24"><path fill="currentColor" d="M18.901 1.153h3.68l-8.04 9.19L24 22.846h-7.406l-5.8-7.584-6.638 7.584H.474l8.6-9.83L0 1.154h7.594l5.243 6.932ZM17.61 20.644h2.039L6.486 3.24H4.298Z"/></svg>`,
+  'openai': `<img src="gpt_logo.png" style="width:100%; height:100%; object-fit:cover; transform: scale(1.48);" alt="ChatGPT">`,
+  'anthropic': `<img src="claude_logo.png" style="width:100%; height:100%; object-fit:cover; transform: scale(1.48);" alt="Claude">`,
+  'google': `<img src="gemini_logo.png" style="width:100%; height:100%; object-fit:cover; transform: scale(1.48);" alt="Gemini">`,
+  'x-ai': `<img src="grok_logo.png" style="width:100%; height:100%; object-fit:cover; transform: scale(1.48);" alt="Grok">`,
   'meta-llama': `<svg viewBox="0 0 24 24" width="28" height="28"><path fill="currentColor" d="M6.915 4.03c-1.968 0-3.683 1.28-4.871 3.113C.704 9.208 0 11.883 0 14.449c0 .706.07 1.369.21 1.973a6.624 6.624 0 0 0 .265.86 5.297 5.297 0 0 0 .371.761c.696 1.159 1.818 1.927 3.593 1.927 1.497 0 2.633-.671 3.965-2.444.76-1.012 1.144-1.626 2.663-4.32l.756-1.339.186-.325c.061.1.121.196.183.3l2.152 3.595c.724 1.21 1.665 2.556 2.47 3.314 1.046.987 1.992 1.22 3.06 1.22 1.075 0 1.876-.355 2.455-.843a3.743 3.743 0 0 0 .81-.973c.542-.939.861-2.127.861-3.745 0-2.72-.681-5.357-2.084-7.45-1.282-1.912-2.957-2.93-4.716-2.93-1.047 0-2.088.467-3.053 1.308-.652.57-1.257 1.29-1.82 2.05-.69-.875-1.335-1.547-1.958-2.056-1.182-.966-2.315-1.303-3.454-1.303zm10.16 2.053c1.147 0 2.188.758 2.992 1.999 1.132 1.748 1.647 4.195 1.647 6.4 0 1.548-.368 2.9-1.839 2.9-.58 0-1.027-.23-1.664-1.004-.496-.601-1.343-1.878-2.832-4.358l-.617-1.028a44.908 44.908 0 0 0-1.255-1.98c.07-.109.141-.224.211-.327 1.12-1.667 2.118-2.602 3.358-2.602zm-10.201.553c1.265 0 2.058.791 2.675 1.446.307.327.737.871 1.234 1.579l-1.02 1.566c-.757 1.163-1.882 3.017-2.837 4.338-1.191 1.649-1.81 1.817-2.486 1.817-.524 0-1.038-.237-1.383-.794-.263-.426-.464-1.13-.464-2.046 0-2.221.63-4.535 1.66-6.088.454-.687.964-1.226 1.533-1.533a2.264 2.264 0 0 1 1.088-.285z"/></svg>`,
   'mistralai': `<svg viewBox="0 0 24 24" width="28" height="28"><path fill="#F4E9E2" d="M17.143 3.429v3.428h-3.429v3.429h-3.428V6.857H6.857V3.43H3.43v13.714H0v3.428h10.286v-3.428H6.857v-3.429h3.429v3.429h3.429v-3.429h3.428v3.429h-3.428v3.428H24v-3.428h-3.43V3.429z"/></svg>`,
   'deepseek': `<svg viewBox="0 0 377.1 277.86" width="30" height="30"><path fill="currentColor" d="M373.15,23.32c-4-1.95-5.72,1.77-8.06,3.66-.79.62-1.47,1.43-2.14,2.14-5.85,6.26-12.67,10.36-21.57,9.86-13.04-.71-24.16,3.38-33.99,13.37-2.09-12.31-9.04-19.66-19.6-24.38-5.54-2.45-11.13-4.9-14.99-10.23-2.71-3.78-3.44-8-4.81-12.16-.85-2.51-1.72-5.09-4.6-5.52-3.13-.5-4.36,2.14-5.58,4.34-4.93,8.99-6.82,18.92-6.65,28.97.43,22.58,9.97,40.56,28.89,53.37,2.16,1.46,2.71,2.95,2.03,5.09-1.29,4.4-2.82,8.68-4.19,13.09-.85,2.82-2.14,3.44-5.15,2.2-10.39-4.34-19.37-10.76-27.29-18.55-13.46-13.02-25.63-27.41-40.81-38.67-3.57-2.64-7.12-5.09-10.81-7.41-15.49-15.07,2.03-27.45,6.08-28.9,4.25-1.52,1.47-6.79-12.23-6.73-13.69.06-26.24,4.65-42.21,10.76-2.34.93-4.79,1.61-7.32,2.14-14.5-2.73-29.55-3.35-45.29-1.58-29.62,3.32-53.28,17.34-70.68,41.28C1.29,88.2-3.63,120.88,2.39,155c6.33,35.91,24.64,65.68,52.8,88.94,29.18,24.1,62.8,35.91,101.15,33.65,23.29-1.33,49.23-4.46,78.48-29.24,7.38,3.66,15.12,5.12,27.97,6.23,9.89.93,19.41-.5,26.79-2.02,11.55-2.45,10.75-13.15,6.58-15.13-33.87-15.78-26.44-9.36-33.2-14.54,17.21-20.41,43.15-41.59,53.3-110.19.79-5.46.11-8.87,0-13.3-.06-2.67.54-3.72,3.61-4.03,8.48-.96,16.72-3.29,24.28-7.47,21.94-12,30.78-31.69,32.87-55.33.31-3.6-.06-7.35-3.86-9.24ZM181.96,235.97c-32.83-25.83-48.74-34.33-55.31-33.96-6.14.34-5.04,7.38-3.69,11.97,1.41,4.53,3.26,7.66,5.85,11.63,1.78,2.64,3.01,6.57-1.78,9.49-10.57,6.58-28.95-2.2-29.82-2.64-21.38-12.59-39.26-29.24-51.87-52.01-12.16-21.92-19.23-45.43-20.39-70.52-.31-6.08,1.47-8.22,7.49-9.3,7.92-1.46,16.11-1.77,24.03-.62,33.49,4.9,62.01,19.91,85.9,43.63,13.65,13.55,23.97,29.71,34.61,45.49,11.3,16.78,23.48,32.75,38.97,45.84,5.46,4.59,9.83,8.09,14,10.67-12.59,1.4-33.62,1.71-47.99-9.68ZM197.69,134.65c0-2.7,2.15-4.84,4.87-4.84.6,0,1.16.12,1.66.31.67.25,1.29.62,1.77,1.18.87.84,1.36,2.08,1.36,3.35,0,2.7-2.15,4.84-4.85,4.84s-4.81-2.14-4.81-4.84ZM246.55,159.77c-3.13,1.27-6.26,2.39-9.27,2.51-4.67.22-9.77-1.68-12.55-4-4.3-3.6-7.36-5.61-8.67-11.94-.54-2.7-.23-6.85.25-9.24,1.12-5.15-.12-8.44-3.74-11.44-2.96-2.45-6.7-3.1-10.82-3.1-1.54,0-2.95-.68-4-1.24-1.72-.87-3.13-3.01-1.78-5.64.43-.84,2.53-2.92,3.02-3.29,5.58-3.19,12.03-2.14,18,.25,5.54,2.26,9.71,6.42,15.72,12.28,6.16,7.1,7.26,9.09,10.76,14.39,2.76,4.19,5.29,8.47,7.01,13.37,1.04,3.04-.31,5.55-3.94,7.1Z"/></svg>`,
@@ -263,8 +315,8 @@ const SESSION = {
 const FLAGS_KEY = 'llm4_features';
 let FLAGS = {
   consensusPanel: true,
-  exportShare: false,
-  pause: false,
+  exportShare: true,
+  pause: true,
   voiceTTS: false,
   voiceSTT: false,
   vision: false,
@@ -279,9 +331,13 @@ let isPaused = false;
 let shouldStop = false;
 let roundNumber = 0;
 let pendingImage = null;
+let speedMultiplier = 1;          // controlled by speed slider
+let customPersonas = {};           // keyed by modelKey
+const messageReactions = new Map(); // msgId -> {up:0, down:0}
+let msgIdCounter = 0;
 
 const MAX_HISTORY = 40;
-const MAX_RETRIES = 2;
+const MAX_RETRIES = 3;
 
 const $ = id => document.getElementById(id);
 
@@ -311,14 +367,21 @@ let placeholderInterval;
 
 // Initialize
 function init() {
+  // Re-query these inside init() to guarantee DOM is ready
+  elements.clearChatBtn = document.getElementById('clear-chat-btn');
+  elements.randomTopicBtn = document.getElementById('random-topic-btn');
+  elements.stopBtn = document.getElementById('stop-btn');
+  elements.autopilotToggle = document.getElementById('autopilot-toggle');
+  elements.layoutToggle = document.getElementById('layout-toggle');
+
   elements.messageInput.addEventListener('input', handleTextareaResize);
   elements.messageInput.addEventListener('keydown', handleKeyDown);
   elements.sendBtn.addEventListener('click', sendMessage);
-  elements.clearChatBtn.addEventListener('click', clearChat);
+  if (elements.clearChatBtn) elements.clearChatBtn.addEventListener('click', clearChat);
 
   // New Features
-  elements.randomTopicBtn.addEventListener('click', startRandomTopic);
-  elements.stopBtn.addEventListener('click', stopGeneration);
+  if (elements.randomTopicBtn) elements.randomTopicBtn.addEventListener('click', startRandomTopic);
+  if (elements.stopBtn) elements.stopBtn.addEventListener('click', stopGeneration);
 
   if (elements.caContainer) {
     elements.caContainer.addEventListener('click', copyCA);
@@ -341,11 +404,10 @@ function init() {
       }
     });
 
-    // Initial load
-    if (localStorage.getItem('grid_layout_enabled') === 'true') {
-      elements.layoutToggle.checked = true;
-      document.body.classList.add('grid-layout');
-    }
+    // Initial load: Force circular table (Grid View OFF)
+    elements.layoutToggle.checked = false;
+    document.body.classList.remove('grid-layout');
+    localStorage.setItem('grid_layout_enabled', 'false');
   }
 
   // Mobile Transcript Toggle
@@ -427,7 +489,7 @@ function renderSeats() {
 
     const seatHTML = `
       <div class="ai-seat" id="seat-${seatKey}" style="top: ${top}%; left: ${left}%; transform: translate(-50%, -50%);">
-          <div class="avatar ${seatKey}" style="background: ${bg}">
+          <div class="avatar ${seatKey}">
               ${svg}
           </div>
           <div class="ai-badge seat-clickable" title="Click to swap model" onclick="toggleSeatMenu('${seatKey}', this)">${ai.name} <small id="badge-${seatKey}">${defaultModel.label}</small></div>
@@ -476,9 +538,6 @@ function handleKeyDown(e) {
 function openSettings() {
   // Populate feature checkboxes from current FLAGS
   const map = {
-    'flag-consensus-panel': 'consensusPanel',
-    'flag-export': 'exportShare',
-    'flag-pause': 'pause',
     'flag-voice-tts': 'voiceTTS',
     'flag-voice-stt': 'voiceSTT',
     'flag-vision': 'vision',
@@ -538,9 +597,8 @@ function saveSettings() {
     elements.apiKeyInput.placeholder = '••••••••••••••••  (saved)';
   }
 
-  /* Provider */
-  const provSelect = document.getElementById('provider-select');
-  if (provSelect) SESSION.provider = provSelect.value;
+  /* Provider — locked to OpenRouter */
+  SESSION.provider = 'openrouter';
   const customUrl = document.getElementById('custom-url-input');
   if (customUrl) SESSION.customUrl = customUrl.value.trim();
 
@@ -549,18 +607,16 @@ function saveSettings() {
     localStorage.setItem('web_search_enabled', webSearchEnabled);
   }
 
-  /* Feature flags — fine to persist */
-  FLAGS.consensusPanel = !!document.getElementById('flag-consensus-panel')?.checked;
-  FLAGS.exportShare = !!document.getElementById('flag-export')?.checked;
-  FLAGS.pause = !!document.getElementById('flag-pause')?.checked;
+  /* Feature flags */
+  FLAGS.consensusPanel = true;  // always on
+  FLAGS.exportShare = true;     // always on
+  FLAGS.pause = true;           // always on
   FLAGS.voiceTTS = !!document.getElementById('flag-voice-tts')?.checked;
   FLAGS.voiceSTT = !!document.getElementById('flag-voice-stt')?.checked;
   FLAGS.vision = !!document.getElementById('flag-vision')?.checked;
 
-  const selectedCount = parseInt(document.getElementById('seat-count-select')?.value || '4');
-  if (selectedCount >= 2 && selectedCount <= 8) {
-    FLAGS.seatCount = selectedCount;
-  }
+  /* Seat count — locked to 4 */
+  FLAGS.seatCount = 4;
 
   localStorage.setItem(FLAGS_KEY, JSON.stringify(FLAGS));
 
@@ -579,13 +635,24 @@ function saveSettings() {
 
 function loadFeatureFlags() {
   try {
-    const saved = localStorage.getItem(FLAGS_KEY);
-    if (saved) FLAGS = { ...FLAGS, ...JSON.parse(saved) };
+    const storedFlags = localStorage.getItem(FLAGS_KEY);
+    if (storedFlags) {
+      try { Object.assign(FLAGS, JSON.parse(storedFlags)); } catch (e) { /* use defaults */ }
+    }
   } catch (e) { /* use defaults */ }
+
+  // Force always-on features (no longer in settings)
+  FLAGS.consensusPanel = true;
+  FLAGS.exportShare = true;
+  FLAGS.pause = true;
+
+  // Force 4 seats — expanded seat counts coming soon
+  SESSION.seatCount = 4;
+  FLAGS.seatCount = 4;
+  AGENT_ORDER = AGENT_ORDER_FULL.slice(0, 4);
   SESSION.featVoiceTTS = FLAGS.voiceTTS;
   SESSION.featVoiceSTT = FLAGS.voiceSTT;
   SESSION.featVision = FLAGS.vision;
-  SESSION.seatCount = FLAGS.seatCount || 4;
 }
 
 function applyFeatureFlags() {
@@ -632,13 +699,14 @@ function startRandomTopic() {
 }
 
 // Transcript Logic
-function appendToTranscript(role, text, modelKey = null) {
+function appendToTranscript(role, text, modelKey = null, opts = {}) {
   let html = '';
-  // Show full text in transcript
-  const parsedText = marked.parseInline(text);
+  let parsedText = marked.parseInline(text);
+  if (typeof highlightMentions === 'function') parsedText = highlightMentions(parsedText);
 
-  // Create copy button HTML
   const copyBtnHtml = `<button class="msg-copy-btn" onclick="copyTranscriptMsg(this, \`${text.replace(/`/g, '\\`').replace(/"/g, '&quot;')}\`)" title="Copy message"><i class="fa-regular fa-copy"></i></button>`;
+
+  const timeBadge = opts.elapsed ? `<span class="resp-time">${(opts.elapsed / 1000).toFixed(1)}s</span>` : '';
 
   if (role === 'system') {
     html = `<div class="transcript-msg system">${text}</div>`;
@@ -646,16 +714,24 @@ function appendToTranscript(role, text, modelKey = null) {
     html = `<div class="transcript-msg user" onclick="this.classList.toggle('expanded')">${copyBtnHtml}<strong>You</strong> ${text}</div>`;
   } else if (role === 'consensus') {
     html = `<div class="transcript-msg consensus" onclick="this.classList.toggle('expanded')">${copyBtnHtml}<strong>⚖ Consensus</strong><br>${parsedText}</div>`;
+  } else if (role === 'research') {
+    const aiName = AI_MODELS[modelKey]?.name || modelKey;
+    html = `<div class="transcript-msg research" onclick="this.classList.toggle('expanded')">${copyBtnHtml}<strong>🔍 ${aiName} (Research)</strong>${timeBadge} ${parsedText}</div>`;
   } else {
     const aiName = AI_MODELS[modelKey].name;
-    html = `<div class="transcript-msg ${modelKey}" onclick="this.classList.toggle('expanded')">${copyBtnHtml}<strong>${aiName}</strong> ${parsedText}</div>`;
+    const msgId = `msg-${++msgIdCounter}`;
+    messageReactions.set(msgId, { up: 0, down: 0 });
+    html = `<div class="transcript-msg ${modelKey}" onclick="this.classList.toggle('expanded')" id="${msgId}">${copyBtnHtml}<strong>${aiName}</strong>${timeBadge} ${parsedText}<div class="react-bar"><button class="react-btn" onclick="event.stopPropagation();reactToMsg('${msgId}','up',this)">👍 <span>0</span></button><button class="react-btn" onclick="event.stopPropagation();reactToMsg('${msgId}','down',this)">👎 <span>0</span></button></div></div>`;
   }
 
+  // Hide the welcome screen the first time any message is appended
+  // Use querySelector fallback in case the id gets stripped by remote commits
+  const welcome = document.getElementById('transcript-welcome') ||
+                  document.querySelector('#transcript-container .transcript-msg.system');
+  if (welcome) welcome.style.display = 'none';
+
   elements.transcriptContainer.insertAdjacentHTML('beforeend', html);
-  elements.transcriptContainer.scrollTo({
-    top: elements.transcriptContainer.scrollHeight,
-    behavior: 'smooth'
-  });
+  elements.transcriptContainer.scrollTo({ top: elements.transcriptContainer.scrollHeight, behavior: 'smooth' });
 }
 
 // Function to handle copying specific transcript messages
@@ -697,7 +773,11 @@ function showBubble(modelKey, content) {
   const bubbleContent = bubble.querySelector('.bubble-content');
 
   seat.classList.add('speaking');
-  bubbleContent.innerHTML = marked.parse(content);
+
+  let htmlContent = marked.parseInline(content);
+  if (typeof highlightMentions === 'function') htmlContent = highlightMentions(htmlContent);
+  bubbleContent.innerHTML = htmlContent;
+
   bubble.classList.add('visible');
 
   // Auto-scroll bubble content to top just in case
@@ -720,10 +800,20 @@ function showBubble(modelKey, content) {
 
 function setTypingStatus(modelKey, isTyping) {
   const seat = document.getElementById(`seat-${modelKey}`);
+  const bubble = document.getElementById(`bubble-${modelKey}`);
+  if (!seat) return;
   if (isTyping) {
     seat.classList.add('typing');
+    // Show animated dots in the speech bubble while waiting
+    if (bubble) {
+      const bc = bubble.querySelector('.bubble-content');
+      if (bc) bc.innerHTML = '<div class="typing-dots"><span></span><span></span><span></span></div>';
+      bubble.classList.add('visible');
+      seat.classList.add('speaking');
+    }
   } else {
     seat.classList.remove('typing');
+    // bubble content will be replaced by showBubble() call
   }
 }
 
@@ -759,10 +849,37 @@ async function sendMessage() {
 
   chatHistory.push({ role: 'user', content, image });
   appendToTranscript('user', content);
+
+  // Pre-debate research round if enabled
+  if (document.getElementById('research-toggle')?.checked) {
+    await runResearchRound(content);
+  }
+
   await runRoundtableCycle();
 }
 
-// Roundtable cycle with retry, history cap, labeled context, varied autopilot
+// A2A: Detect mentions like @chatgpt, @claude
+function detectMentions(text) {
+  const mentions = [];
+  if (!text) return mentions;
+  const lowerText = text.toLowerCase();
+  AGENT_ORDER.forEach(modelKey => {
+    const name = AI_MODELS[modelKey].name.toLowerCase();
+    if (lowerText.includes(`@${name}`) || lowerText.includes(`@${modelKey}`)) {
+      if (!mentions.includes(modelKey)) mentions.push(modelKey);
+    }
+  });
+  return mentions;
+}
+
+// A2A: Highlight mentions in HTML
+function highlightMentions(html) {
+  if (!html) return html;
+  // Match @Word but avoid matching inside HTML tags (like href="mailto:...")
+  return html.replace(/(^|[^a-zA-Z0-9_])@([a-zA-Z0-9_-]+)/g, '$1<span class="a2a-mention">@$2</span>');
+}
+
+// Roundtable cycle with A2A queue, retry, history cap
 async function runRoundtableCycle() {
   if (chatHistory.length > MAX_HISTORY) chatHistory = chatHistory.slice(-MAX_HISTORY);
   const roundResponses = [];
@@ -770,13 +887,25 @@ async function runRoundtableCycle() {
   updateRoundCounter();
 
   try {
-    for (const modelKey of AGENT_ORDER) {
-      if (shouldStop) break;
+    // A2A: Initialize queue based on the user's message
+    const lastMsg = chatHistory[chatHistory.length - 1]?.content || "";
+    let queue = detectMentions(lastMsg);
+    if (queue.length === 0) queue = [...AGENT_ORDER]; // Default to all if no tags
+
+    let loopCount = 0;
+    const MAX_AUTO_LOOPS = 4; // Prevent infinite LLM loops
+
+    while (queue.length > 0 && !shouldStop) {
+      if (loopCount >= MAX_AUTO_LOOPS) break;
+      const modelKey = queue.shift();
+      loopCount++;
+
       while (isPaused && !shouldStop) await sleep(200);
       if (shouldStop) break;
 
       setTypingStatus(modelKey, true);
       let responseText = null, attempts = 0;
+      const turnStart = Date.now();
 
       while (attempts < MAX_RETRIES && !responseText) {
         try {
@@ -784,16 +913,21 @@ async function runRoundtableCycle() {
           responseText = await fetchAIResponse(modelKey, chatHistory);
         } catch (err) {
           console.error(`[${modelKey}] attempt ${attempts}:`, err.message);
-          if (attempts >= MAX_RETRIES) responseText = `*[Connection issue — skipping this turn]*`;
-          else await sleep(1000 * attempts);
+          if (attempts >= MAX_RETRIES) {
+            responseText = `*[${AI_MODELS[modelKey].name} is unavailable — skipping]*`;
+          } else {
+            await sleep(1500 * attempts); // exponential: 1.5s, 3s
+          }
         }
       }
 
+      const elapsed = Date.now() - turnStart;
       if (!responseText?.trim()) responseText = "I'll defer to the others on this one.";
 
       setTypingStatus(modelKey, false);
       showBubble(modelKey, responseText);
-      appendToTranscript('ai', responseText, modelKey);
+      appendToTranscript('ai', responseText, modelKey, { elapsed });
+
 
       chatHistory.push({
         role: 'assistant',
@@ -802,14 +936,25 @@ async function runRoundtableCycle() {
       });
       roundResponses.push({ name: AI_MODELS[modelKey].name, text: responseText });
 
+      // A2A: Check for tags in the AI's response to continue the autonomous loop
+      const nextMentions = detectMentions(responseText);
+      nextMentions.forEach(mention => {
+        // Add to queue if not already there, creating an autonomous loop
+        if (!queue.includes(mention) && AGENT_ORDER.includes(mention)) {
+          queue.push(mention);
+        }
+      });
+
       if (SESSION.featVoiceTTS && typeof Voice !== 'undefined') Voice.speak(responseText, modelKey);
 
-      const readTime = Math.min(Math.max(responseText.length * 8, 1500), 4000);
+      // Pacing delay — scaled by speed slider
+      const readTime = Math.min(Math.max(responseText.length * 8, 2000), 5000) * speedMultiplier;
       await sleep(readTime);
     }
 
     /* Consensus synthesis */
-    if (!shouldStop && SESSION.apiKey && roundResponses.length >= 2) {
+    const isHosted = window.location.hostname !== 'localhost' && window.location.hostname !== '127.0.0.1' && window.location.protocol.startsWith('http');
+    if (!shouldStop && (SESSION.apiKey || isHosted) && roundResponses.length >= 2) {
       await synthesizeConsensus(roundResponses);
     }
 
@@ -820,7 +965,7 @@ async function runRoundtableCycle() {
 
     /* Varied autopilot */
     if (!shouldStop && elements.autopilotToggle?.checked) {
-      await sleep(1500);
+      await sleep(2000);
       const continuations = [
         "Challenge each other's strongest points directly — use names.",
         "What is the fatal flaw in the most popular argument made so far?",
@@ -853,26 +998,51 @@ async function runRoundtableCycle() {
    API LAYER — proxy-aware (Vercel) or direct (localhost)
    ════════════════════════════════════════════════════════════════ */
 async function fetchAIResponse(modelKey, history) {
+  const isHosted = window.location.hostname !== 'localhost' && window.location.hostname !== '127.0.0.1' && window.location.protocol.startsWith('http');
+
   /* Demo mode */
-  if (!SESSION.apiKey) return getMockResponse(modelKey, history);
+  if (!isHosted && !SESSION.apiKey) return getMockResponse(modelKey, history);
 
   const agent = AI_MODELS[modelKey];
   const others = AGENT_ORDER.filter(k => k !== modelKey).map(k => AI_MODELS[k].name).join(', ');
 
-  const apiMessages = history.map(msg => ({
-    role: msg.role === 'user' ? 'user' : 'assistant',
-    content: msg.image
-      ? [{ type: 'image_url', image_url: { url: msg.image } }, { type: 'text', text: msg.content }]
-      : msg.content,
-  }));
+  // Build API messages — clearly label each AI speaker so models know who said what
+  const apiMessages = history.map(msg => {
+    if (msg.role === 'user') {
+      return {
+        role: 'user',
+        content: msg.image
+          ? [{ type: 'image_url', image_url: { url: msg.image } }, { type: 'text', text: msg.content }]
+          : msg.content,
+      };
+    }
+    // For AI turns: use 'user' role with clear speaker label so all models see the full thread
+    // (Most providers don't support multiple assistants; 'user' role preserves visibility)
+    const speakerName = msg.agent ? AI_MODELS[msg.agent]?.name : 'AI';
+    return {
+      role: 'user',
+      content: `[${speakerName} said]: ${msg.content.replace(/^\[.*?\]: /, '')}`,
+    };
+  });
 
+  // A2A: Inject tag instructions so AIs know they are in a chat room
+  const availableTags = AGENT_ORDER.filter(k => k !== modelKey).map(k => `@${AI_MODELS[k].name}`).join(', ');
+  const tagInstructions = `\n\nINTERACTIVE CHAT RULES: You can pass the mic to a specific AI by tagging them at the end of your response like "@Name". Active tags: ${availableTags}.`;
+
+  // Inject debate mode constraint after persona (if not free mode)
+  const modeConstraint = DEBATE_MODES[currentDebateMode]?.constraint;
+  // Custom persona overrides default agent persona if set
+  const personaText = customPersonas[modelKey]
+    ? customPersonas[modelKey]
+    : agent.persona(others);
+  const systemContent = personaText + tagInstructions + (modeConstraint ? `\n\n${modeConstraint}` : '');
   const messages = [
-    { role: 'system', content: agent.persona(others) },
+    { role: 'system', content: systemContent },
     ...apiMessages,
   ];
 
   /* Proxy path when deployed on Vercel — key lives server-side */
-  const isHosted = window.location.hostname !== 'localhost' && window.location.hostname !== '127.0.0.1';
+  // The isHosted variable is defined at the top of the function
 
   if (isHosted) {
     const resp = await fetch('/api/chat', {
@@ -882,13 +1052,20 @@ async function fetchAIResponse(modelKey, history) {
         provider: SESSION.provider || 'openrouter',
         model: agent.model_id,
         messages,
-        max_tokens: 200,
+        max_tokens: 600,
+        // Note: API keys live server-side only — never sent from browser
         ...(webSearchEnabled ? { plugins: [{ id: 'web' }] } : {})
       }),
     });
     if (resp.status === 429) {
       const d = await resp.json().catch(() => ({}));
       throw new Error(d.error || 'Rate limit reached — try again later');
+    }
+    if (resp.status === 500) {
+      const d = await resp.json().catch(() => ({}));
+      // Provider not configured on server — give actionable guidance
+      const msg = d.error || `Provider error — try switching to OpenRouter in Settings`;
+      throw new Error(msg);
     }
     if (!resp.ok) {
       const d = await resp.json().catch(() => ({}));
@@ -984,7 +1161,7 @@ async function synthesizeConsensus(responses) {
 
   const transcript = responses.map(r => `${r.name}: ${r.text}`).join('\n\n');
   try {
-    const isHosted = window.location.hostname !== 'localhost' && window.location.hostname !== '127.0.0.1';
+    const isHosted = window.location.hostname !== 'localhost' && window.location.hostname !== '127.0.0.1' && window.location.protocol.startsWith('http');
 
     const msgs = [
       { role: 'system', content: `You are a neutral synthesis engine. Produce a CONSENSUS SUMMARY:\n**Agreed:** [what the group converged on]\n**Tension:** [the core disagreement]\n**Synthesis:** [2-sentence integrated conclusion]\nUnder 120 words total. Be precise.` },
@@ -1028,6 +1205,102 @@ async function synthesizeConsensus(responses) {
 function updateRoundCounter() {
   const el = document.getElementById('round-counter');
   if (el) el.textContent = roundNumber > 0 ? `Round ${roundNumber}` : '';
+}
+
+/* ── Reactions ───────────────────────────────────────────────── */
+function reactToMsg(msgId, type, btn) {
+  const r = messageReactions.get(msgId);
+  if (!r) return;
+  const bar = btn.closest('.react-bar');
+  const upBtn = bar.querySelector('.react-btn:first-child');
+  const downBtn = bar.querySelector('.react-btn:last-child');
+
+  const isUpVoted = upBtn.classList.contains('voted-up');
+  const isDownVoted = downBtn.classList.contains('voted-down');
+
+  if (type === 'up') {
+    if (isUpVoted) {
+      r.up = Math.max(0, r.up - 1);
+      upBtn.classList.remove('voted-up');
+    } else {
+      if (isDownVoted) { r.down = Math.max(0, r.down - 1); downBtn.classList.remove('voted-down'); }
+      r.up++;
+      upBtn.classList.add('voted-up');
+    }
+  } else {
+    if (isDownVoted) {
+      r.down = Math.max(0, r.down - 1);
+      downBtn.classList.remove('voted-down');
+    } else {
+      if (isUpVoted) { r.up = Math.max(0, r.up - 1); upBtn.classList.remove('voted-up'); }
+      r.down++;
+      downBtn.classList.add('voted-down');
+    }
+  }
+  messageReactions.set(msgId, r);
+  upBtn.querySelector('span').textContent = r.up || 0;
+  downBtn.querySelector('span').textContent = r.down || 0;
+}
+
+/* ── Research Round ──────────────────────────────────────────── */
+async function runResearchRound(topic) {
+  appendToTranscript('system', `🔍 <strong>Research Round</strong> — agents gathering facts on: <em>${topic}</em>`);
+  const isHosted = window.location.hostname !== 'localhost' && window.location.hostname !== '127.0.0.1';
+  const researchFindings = [];
+
+  for (const modelKey of AGENT_ORDER) {
+    if (shouldStop) break;
+    setTypingStatus(modelKey, true);
+    const researchStart = Date.now();
+    const researchMessages = [
+      { role: 'system', content: `You are a neutral research assistant. Be factual and concise.` },
+      { role: 'user', content: `Research the topic: "${topic}". Provide 2-3 key facts, data points, or perspectives that would be useful for a debate. Be brief and factual. No opinions.` },
+    ];
+    let findings = null;
+    try {
+      if (isHosted) {
+        const resp = await fetch('/api/chat', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({
+            provider: SESSION.provider || 'openrouter',
+            model: AI_MODELS[modelKey].model_id,
+            messages: researchMessages,
+            max_tokens: 400,
+            plugins: [{ id: 'web' }], // web search for live data
+            // Note: API keys live server-side only
+          }),
+        });
+        const data = await resp.json();
+        findings = data.choices?.[0]?.message?.content || null;
+      } else {
+        const resp = await fetch('https://openrouter.ai/api/v1/chat/completions', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json', 'Authorization': `Bearer ${SESSION.apiKey}`, 'HTTP-Referer': window.location.origin, 'X-Title': 'LLM4 Roundtable' },
+          body: JSON.stringify({ model: AI_MODELS[modelKey].model_id, messages: researchMessages, max_tokens: 150, plugins: [{ id: 'web' }] }),
+        });
+        const data = await resp.json();
+        findings = data.choices?.[0]?.message?.content || null;
+      }
+    } catch (e) { findings = null; }
+
+    const elapsed = Date.now() - researchStart;
+    setTypingStatus(modelKey, false);
+    if (findings) {
+      researchFindings.push(`[${AI_MODELS[modelKey].name} research]: ${findings}`);
+      appendToTranscript('research', findings, modelKey, { elapsed });
+      await sleep(1000);
+    }
+  }
+
+  if (researchFindings.length > 0) {
+    // Inject research context into chat history so debaters have it
+    chatHistory.push({
+      role: 'user',
+      content: `RESEARCH CONTEXT (pre-debate facts gathered by the agents):\n${researchFindings.join('\n\n')}\n\nNow begin the main debate.`,
+    });
+    appendToTranscript('system', `✅ Research complete. Starting main debate now.`);
+  }
 }
 
 function hideConsensus() {
@@ -1101,7 +1374,21 @@ function lockControls(locked) {
    ════════════════════════════════════════════════════════════════ */
 function clearChat() {
   if (!confirm('Clear the table and start over?')) return;
+  // Stop any running debate first
+  shouldStop = true; isPaused = false;
+  isGenerating = false;
+  if (placeholderInterval) { clearInterval(placeholderInterval); placeholderInterval = null; }
+  elements.autopilotToggle.checked = false;
+  elements.stopBtn.style.display = 'none';
+  const pauseBtn = document.getElementById('pause-btn');
+  if (pauseBtn) pauseBtn.style.display = 'none';
+  elements.sendBtn.disabled = false;
+  elements.messageInput.disabled = false;
+  elements.messageInput.placeholder = 'Address the roundtable...';
+  lockControls(false);
+
   chatHistory = []; roundNumber = 0; pendingImage = null;
+  msgIdCounter = 0; messageReactions.clear();
   hideAllBubbles(); hideConsensus();
   if (typeof Vision !== 'undefined') Vision.clear();
   updateRoundCounter();
@@ -1201,14 +1488,67 @@ function toggleSeatMenu(seatKey, anchorEl) {
   });
   searchInput.addEventListener('click', e => e.stopPropagation());
 
+  /* Custom Persona section */
+  const personaWrap = document.createElement('div');
+  personaWrap.className = 'custom-persona-wrap';
+  const existingPersona = customPersonas[seatKey] || '';
+  personaWrap.innerHTML = `
+    ${existingPersona ? `<span class="persona-active-tag">✦ Custom persona active</span>` : ''}
+    <textarea placeholder="Override ${AI_MODELS[seatKey].name}'s system prompt…">${existingPersona}</textarea>
+    <button class="persona-set-btn">Set Persona</button>
+    ${existingPersona ? `<button class="persona-clear-btn" style="background:rgba(239,68,68,0.7);margin-top:-0.2rem">Clear</button>` : ''}
+  `;
+  personaWrap.querySelector('.persona-set-btn').addEventListener('click', e => {
+    e.stopPropagation();
+    const val = personaWrap.querySelector('textarea').value.trim();
+    if (val) {
+      customPersonas[seatKey] = val;
+      appendToTranscript('system', `✦ ${AI_MODELS[seatKey].name} now has a custom persona.`);
+      closeSeatMenus();
+    }
+  });
+  const clearBtn = personaWrap.querySelector('.persona-clear-btn');
+  if (clearBtn) {
+    clearBtn.addEventListener('click', e => {
+      e.stopPropagation();
+      delete customPersonas[seatKey];
+      appendToTranscript('system', `✦ ${AI_MODELS[seatKey].name} persona reset to default.`);
+      closeSeatMenus();
+    });
+  }
+  personaWrap.querySelectorAll('textarea, button').forEach(el => el.addEventListener('click', e => e.stopPropagation()));
+  menu.appendChild(personaWrap);
+
   document.body.appendChild(menu);
   const rect = anchorEl.getBoundingClientRect();
   const menuW = 260;
   let left = rect.left + rect.width / 2 - menuW / 2;
-  let top = rect.bottom + 8 + window.scrollY;
   left = Math.max(8, Math.min(left, window.innerWidth - menuW - 8));
+
+  // Flip menu above the seat if it would go below the viewport
+  const estimatedMenuH = 380;
+  const spaceBelow = window.innerHeight - rect.bottom;
+  let top;
+  if (spaceBelow < estimatedMenuH && rect.top > estimatedMenuH) {
+    // Open above the seat
+    top = rect.top - estimatedMenuH + window.scrollY;
+  } else {
+    // Open below the seat (default)
+    top = rect.bottom + 8 + window.scrollY;
+  }
   menu.style.left = left + 'px';
   menu.style.top = top + 'px';
+
+  // Also clamp to viewport bottom in case neither direction works perfectly
+  requestAnimationFrame(() => {
+    const menuRect = menu.getBoundingClientRect();
+    if (menuRect.bottom > window.innerHeight) {
+      menu.style.top = (window.innerHeight - menuRect.height - 8 + window.scrollY) + 'px';
+    }
+    if (menuRect.top < 0) {
+      menu.style.top = (8 + window.scrollY) + 'px';
+    }
+  });
 
   activeSeatMenu = menu;
   searchInput.focus();
@@ -1250,8 +1590,16 @@ const Voice = {
   speak(text, agentKey) {
     if (!SESSION.featVoiceTTS || !this.synth) return;
     this.synth.cancel();
-    const utt = new SpeechSynthesisUtterance(
-      text.replace(/\*+/g, '').replace(/#+/g, '').substring(0, 250));
+
+    // Aggressive regex to strip markdown (bold, italic, links, brackets) and emojis for clean TTS
+    let cleanText = text
+      .replace(/!\[.*?\]\(.*?\)/g, '') // Remove image markdown
+      .replace(/\[([^\]]+)\]\([^)]+\)/g, '$1') // Extract text from links
+      .replace(/[*_~`#]+/g, '') // Remove formatting characters
+      .replace(/<[^>]*>?/gm, '') // Remove HTML tags
+      .replace(/(\u00a9|\u00ae|[\u2000-\u3300]|\ud83c[\ud000-\udfff]|\ud83d[\ud000-\udfff]|\ud83e[\ud000-\udfff])/g, ''); // Remove emojis
+
+    const utt = new SpeechSynthesisUtterance(cleanText.substring(0, 300));
     const engVoices = this.voices.filter(v => v.lang.startsWith('en'));
     const idx = AGENT_ORDER.indexOf(agentKey);
     utt.voice = engVoices[idx % Math.max(engVoices.length, 1)] || null;
@@ -1343,7 +1691,7 @@ const escHtml = s => String(s)
    ⑥ runAgentPipeline    — orchestrates ③④⑤ after each round
    ════════════════════════════════════════════════════════════════ */
 
-const FUTURE_AGENT_MODE = false;
+const FUTURE_AGENT_MODE = true;
 const ENABLE_LOGGING = false;
 
 function logRequest(agentKey, prompt, response, startTime) {
@@ -1426,25 +1774,6 @@ document.addEventListener('DOMContentLoaded', () => {
   const attachBtn = document.getElementById('attach-btn');
   const visionInput = document.getElementById('vision-file-input');
   const visionClear = document.getElementById('vision-clear-btn');
-  const closeBtn = document.getElementById('close-modal-btn');
-  if (closeBtn) closeBtn.addEventListener('click', closeSettings);
-
-  // Launch Warning Overlay Logic
-  const launchOverlay = document.getElementById('launch-warning-overlay');
-  const acceptWarningBtn = document.getElementById('accept-warning-btn');
-
-  const dismissWarning = () => {
-    if (launchOverlay) launchOverlay.style.display = 'none';
-    localStorage.setItem('v1_warning_accepted_v2', 'true');
-  };
-
-  if (acceptWarningBtn) acceptWarningBtn.addEventListener('click', dismissWarning);
-
-  // Show if not previously accepted
-  // BYPASS: Always hide the warning overlay
-  if (launchOverlay) {
-    launchOverlay.style.display = 'none';
-  }
 
   if (pauseBtn) pauseBtn.addEventListener('click', togglePause);
   if (exportBtn) exportBtn.addEventListener('click', exportTranscript);
@@ -1454,29 +1783,98 @@ document.addEventListener('DOMContentLoaded', () => {
   if (visionInput) visionInput.addEventListener('change', e => Vision.handleFile(e.target));
   if (visionClear) visionClear.addEventListener('click', () => Vision.clear());
 
-  /* Per-seat model pickers */
-  document.querySelectorAll('.seat-clickable').forEach(badge => {
-    badge.addEventListener('click', e => {
+  /* Debate mode selector */
+  const modeBtns = document.querySelectorAll('.mode-btn');
+  const modeDesc = document.getElementById('mode-desc');
+  modeBtns.forEach(btn => {
+    btn.addEventListener('click', e => {
+      e.stopPropagation();
+      const modeId = btn.dataset.mode;
+      const mode = DEBATE_MODES[modeId];
+      if (!mode) return;
+      currentDebateMode = modeId;
+      modeBtns.forEach(b => b.classList.remove('active'));
+      btn.classList.add('active');
+      if (modeDesc) modeDesc.textContent = mode.desc;
+      if (modeId !== 'free') {
+        appendToTranscript('system', `${mode.emoji} <strong>${mode.label}</strong> mode active — ${mode.desc}`);
+      }
+    });
+  });
+
+  /* Controls panel toggle */
+  const controlsToggleBtn = document.getElementById('controls-toggle-btn');
+  const controlsPanel = document.getElementById('controls-panel');
+  if (controlsToggleBtn && controlsPanel) {
+    controlsToggleBtn.addEventListener('click', e => {
+      e.stopPropagation();
+      const open = controlsPanel.classList.toggle('open');
+      controlsToggleBtn.classList.toggle('active', open);
+    });
+    // Close on outside click
+    document.addEventListener('click', e => {
+      if (!controlsPanel.contains(e.target) && e.target !== controlsToggleBtn) {
+        controlsPanel.classList.remove('open');
+        controlsToggleBtn.classList.remove('active');
+      }
+    });
+    // Close panel when user clicks an action button inside it (not toggles)
+    controlsPanel.querySelectorAll('.ctrl-btn').forEach(btn => {
+      btn.addEventListener('click', () => {
+        controlsPanel.classList.remove('open');
+        controlsToggleBtn.classList.remove('active');
+      });
+    });
+  }
+
+  /* V1 Warning Modal — shows every time */
+  const launchOverlay = document.getElementById('launch-warning-overlay');
+  const acceptWarningBtn = document.getElementById('accept-warning-btn');
+  if (launchOverlay) {
+    launchOverlay.style.display = 'flex';
+    if (acceptWarningBtn) {
+      acceptWarningBtn.addEventListener('click', () => {
+        launchOverlay.style.display = 'none';
+      });
+    }
+  }
+
+  /* Speed slider */
+  const speedSlider = document.getElementById('speed-slider');
+  if (speedSlider) {
+    speedSlider.addEventListener('input', () => {
+      speedMultiplier = parseFloat(speedSlider.value);
+    });
+  }
+
+  /* Per-seat model pickers — event delegation so re-rendered seats stay clickable */
+  const roundtableWrapper = document.getElementById('roundtable-wrapper');
+  if (roundtableWrapper) {
+    roundtableWrapper.addEventListener('click', e => {
+      const badge = e.target.closest('.seat-clickable');
+      if (!badge) return;
       e.stopPropagation();
       const seat = badge.closest('.ai-seat');
       if (!seat) return;
       const seatKey = seat.id.replace('seat-', '');
       if (!isGenerating) toggleSeatMenu(seatKey, badge);
     });
-  });
+  }
   document.addEventListener('click', closeSeatMenus);
 
   /* Init feature modules */
   Voice.init();
   Vision.init();
   applyFeatureFlags();
+
+  /* Prevent Ctrl+Scroll and Ctrl+/- zoom from breaking layout */
+  document.addEventListener('wheel', e => {
+    if (e.ctrlKey) e.preventDefault();
+  }, { passive: false });
+  document.addEventListener('keydown', e => {
+    if ((e.ctrlKey || e.metaKey) && (e.key === '+' || e.key === '-' || e.key === '=' || e.key === '0')) {
+      e.preventDefault();
+    }
+  });
 });
 
-// Double check injection in case DOMContentLoaded already fired before this script
-document.addEventListener('click', function (e) {
-  if (e.target && e.target.id === 'accept-warning-btn') {
-    const launchOverlay = document.getElementById('launch-warning-overlay');
-    if (launchOverlay) launchOverlay.style.display = 'none';
-    localStorage.setItem('v1_warning_accepted', 'true');
-  }
-});
