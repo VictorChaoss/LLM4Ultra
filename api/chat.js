@@ -175,7 +175,8 @@ export default async function handler(req, res) {
 
   // Handle preflight
   if (req.method === 'OPTIONS') {
-    return res.status(200).set(corsHeaders).end();
+    Object.keys(corsHeaders).forEach(k => res.setHeader(k, corsHeaders[k]));
+    return res.status(200).end();
   }
 
   // Only allow POST
@@ -190,7 +191,8 @@ export default async function handler(req, res) {
 
   const rate = getRateStatus(ip);
   if (!rate.allowed) {
-    return res.status(429).set(corsHeaders).json({
+    Object.keys(corsHeaders).forEach(k => res.setHeader(k, corsHeaders[k]));
+    return res.status(429).json({
       error: `Rate limit exceeded. Max ${MAX_REQUESTS_PER_HOUR} requests per hour. Try again later.`,
       retryAfter: RATE_WINDOW_MS / 1000,
     });
@@ -199,7 +201,8 @@ export default async function handler(req, res) {
   // Enhanced rate limiting — Anon AI
   const enhanced = checkEnhancedRateLimit(ip);
   if (!enhanced.allowed) {
-    return res.status(429).set(corsHeaders).json({
+    Object.keys(corsHeaders).forEach(k => res.setHeader(k, corsHeaders[k]));
+    return res.status(429).json({
       error: enhanced.reason,
       retryAfter: enhanced.retryAfter,
     });
@@ -210,17 +213,20 @@ export default async function handler(req, res) {
   try {
     body = typeof req.body === 'string' ? JSON.parse(req.body) : req.body;
   } catch {
-    return res.status(400).set(corsHeaders).json({ error: 'Invalid JSON' });
+    Object.keys(corsHeaders).forEach(k => res.setHeader(k, corsHeaders[k]));
+    return res.status(400).json({ error: 'Invalid JSON' });
   }
 
   const { provider: providerId, model, messages, plugins, apiKey: userKey } = body;
 
   if (!providerId || !messages || !Array.isArray(messages)) {
-    return res.status(400).set(corsHeaders).json({ error: 'Missing required fields: provider, messages' });
+    Object.keys(corsHeaders).forEach(k => res.setHeader(k, corsHeaders[k]));
+    return res.status(400).json({ error: 'Missing required fields: provider, messages' });
   }
 
   if (!PROVIDER_CONFIG[providerId]) {
-    return res.status(400).set(corsHeaders).json({ error: `Unknown provider: ${providerId}` });
+    Object.keys(corsHeaders).forEach(k => res.setHeader(k, corsHeaders[k]));
+    return res.status(400).json({ error: `Unknown provider: ${providerId}` });
   }
 
   // Validate messages — strip anything dangerous
@@ -229,13 +235,15 @@ export default async function handler(req, res) {
     .map(m => ({ role: m.role, content: m.content }));
 
   if (safeMessages.length === 0) {
-    return res.status(400).set(corsHeaders).json({ error: 'No valid messages' });
+    Object.keys(corsHeaders).forEach(k => res.setHeader(k, corsHeaders[k]));
+    return res.status(400).json({ error: 'No valid messages' });
   }
 
   // Abuse detection — Anon AI
   const abuse = detectAbuse(ip, safeMessages);
   if (abuse.abuse) {
-    return res.status(400).set(corsHeaders).json({ error: abuse.reason });
+    Object.keys(corsHeaders).forEach(k => res.setHeader(k, corsHeaders[k]));
+    return res.status(400).json({ error: abuse.reason });
   }
 
   // ── Resolve provider settings ────────────────────────────────
@@ -246,11 +254,13 @@ export default async function handler(req, res) {
   const apiModel = model || (cfg.modelEnv ? process.env[cfg.modelEnv] : cfg.defaultModel);
 
   if (!apiUrl) {
-    return res.status(500).set(corsHeaders).json({ error: `Provider ${providerId} not configured on this server.` });
+    Object.keys(corsHeaders).forEach(k => res.setHeader(k, corsHeaders[k]));
+    return res.status(500).json({ error: `Provider ${providerId} not configured on this server.` });
   }
 
   if (!apiKey && providerId !== 'custom') {
-    return res.status(500).set(corsHeaders).json({
+    Object.keys(corsHeaders).forEach(k => res.setHeader(k, corsHeaders[k]));
+    return res.status(500).json({
       error: `API key for ${providerId} not set in server environment. Contact the site admin.`
     });
   }
@@ -283,13 +293,15 @@ export default async function handler(req, res) {
       body: JSON.stringify(upstreamBody),
     });
   } catch (err) {
-    return res.status(502).set(corsHeaders).json({ error: `Failed to reach ${providerId}: ${err.message}` });
+    Object.keys(corsHeaders).forEach(k => res.setHeader(k, corsHeaders[k]));
+    return res.status(502).json({ error: `Failed to reach ${providerId}: ${err.message}` });
   }
 
   const data = await upstream.json().catch(() => ({}));
 
   if (!upstream.ok) {
-    return res.status(upstream.status).set(corsHeaders).json({
+    Object.keys(corsHeaders).forEach(k => res.setHeader(k, corsHeaders[k]));
+    return res.status(upstream.status).json({
       error: data.error?.message || `Provider error ${upstream.status}`,
     });
   }
@@ -301,7 +313,8 @@ export default async function handler(req, res) {
   serverLog(ip, providerId, apiModel, JSON.stringify(safeMessages).length, upstream.status, Date.now() - start);
 
   // Strip provider metadata before returning — only send what browser needs
-  return res.status(200).set(corsHeaders).json({
+  Object.keys(corsHeaders).forEach(k => res.setHeader(k, corsHeaders[k]));
+    return res.status(200).json({
     choices: data.choices,
     usage: data.usage,
   });
@@ -440,7 +453,8 @@ function detectAbuse(ip, messages) {
      // Enhanced rate limiting — Anon AI
      const enhanced = checkEnhancedRateLimit(ip);
      if (!enhanced.allowed) {
-       return res.status(429).set(corsHeaders).json({
+       Object.keys(corsHeaders).forEach(k => res.setHeader(k, corsHeaders[k]));
+    return res.status(429).json({
          error: enhanced.reason,
          retryAfter: enhanced.retryAfter,
        });
@@ -451,7 +465,8 @@ function detectAbuse(ip, messages) {
      // Abuse detection — Anon AI
      const abuse = detectAbuse(ip, safeMessages);
      if (abuse.abuse) {
-       return res.status(400).set(corsHeaders).json({ error: abuse.reason });
+       Object.keys(corsHeaders).forEach(k => res.setHeader(k, corsHeaders[k]));
+    return res.status(400).json({ error: abuse.reason });
      }
 
    To activate server logging, add after the upstream fetch:
