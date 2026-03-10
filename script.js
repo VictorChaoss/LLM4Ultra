@@ -1035,7 +1035,9 @@ async function fetchAIResponse(modelKey, history) {
   const personaText = customPersonas[modelKey]
     ? customPersonas[modelKey]
     : agent.persona(others);
-  const systemContent = personaText + tagInstructions + (modeConstraint ? `\n\n${modeConstraint}` : '');
+
+  const timeContext = `\n\n[SYSTEM CLOCK: The current date and time is ${new Date().toLocaleString()}. You are operating in real-time. Do not say you are an AI without access to the current date.]`;
+  const systemContent = personaText + tagInstructions + timeContext + (modeConstraint ? `\n\n${modeConstraint}` : '');
   const messages = [
     { role: 'system', content: systemContent },
     ...apiMessages,
