@@ -3049,3 +3049,23 @@ body.glitch-mode * {
         opacity: 1;
     }
 }
+
+/* ════════════════════════════════════════════════════════════════
+   AETHER TRANSCRIPT STYLING
+   ════════════════════════════════════════════════════════════════ */
+.transcript-msg.aether {
+    border-left-color: #ff0000;
+    background: rgba(40, 0, 0, 0.5);
+    color: #ffcccc;
+}
+
+.transcript-msg.aether::before {
+    background: #ff0000;
+    box-shadow: 0 0 10px #ff0000;
+}
+
+.transcript-msg.aether strong {
+    color: #ffaa00;
+    text-shadow: 0 0 5px rgba(255, 0, 0, 0.5);
+    letter-spacing: 1px;
+}

@@ -718,7 +718,7 @@ function appendToTranscript(role, text, modelKey = null, opts = {}) {
     const aiName = AI_MODELS[modelKey]?.name || modelKey;
     html = `<div class="transcript-msg research" onclick="this.classList.toggle('expanded')">${copyBtnHtml}<strong>🔍 ${aiName} (Research)</strong>${timeBadge} ${parsedText}</div>`;
   } else {
-    const aiName = AI_MODELS[modelKey].name;
+    const aiName = AI_MODELS[modelKey]?.name || String(modelKey).toUpperCase();
     const msgId = `msg-${++msgIdCounter}`;
     messageReactions.set(msgId, { up: 0, down: 0 });
     html = `<div class="transcript-msg ${modelKey}" onclick="this.classList.toggle('expanded')" id="${msgId}">${copyBtnHtml}<strong>${aiName}</strong>${timeBadge} ${parsedText}<div class="react-bar"><button class="react-btn" onclick="event.stopPropagation();reactToMsg('${msgId}','up',this)">👍 <span>0</span></button><button class="react-btn" onclick="event.stopPropagation();reactToMsg('${msgId}','down',this)">👎 <span>0</span></button></div></div>`;
