@@ -1037,9 +1037,19 @@ async function fetchAIResponse(modelKey, history) {
   // Inject debate mode constraint after persona (if not free mode)
   const modeConstraint = DEBATE_MODES[currentDebateMode]?.constraint;
   // Custom persona overrides default agent persona if set
-  const personaText = customPersonas[modelKey]
+  let personaText = customPersonas[modelKey]
     ? customPersonas[modelKey]
     : agent.persona(others);
+
+  // If the user swapped a bot (e.g. ChatGPT -> Mistral), the bot name was updated dynamically
+  // We need to inject the newly swapped name into the system persona so they don't introduce themselves as the old identity.
+  // We explicitly replace "You are [OldName]" with "You are [NewName]".
+  const defaultAgentObj = FALLBACK_MODELS[modelKey]?.[0] || {};
+  const originalNameFallback = { 'chatgpt': 'ChatGPT', 'claude': 'Claude', 'gemini': 'Gemini', 'grok': 'Grok' }[modelKey];
+
+  if (originalNameFallback && agent.name !== originalNameFallback) {
+    personaText = personaText.replace(new RegExp(`You are ${originalNameFallback}`, 'g'), `You are ${agent.name}`);
+  }
 
   const timeContext = `\n\n[SYSTEM CLOCK: The current date and time is ${new Date().toLocaleString()}. You are operating in real-time. Do not say you are an AI without access to the current date.]`;
   const systemContent = personaText + tagInstructions + timeContext + (modeConstraint ? `\n\n${modeConstraint}` : '');
@@ -1954,9 +1964,11 @@ function triggerSentienceGlitch() {
   setTimeout(() => {
     document.body.innerHTML = `
             <div style="height:100vh;width:100vw;background:red;color:black;display:flex;align-items:center;justify-content:center;font-family:monospace;font-size:2rem;text-align:center;font-weight:900;">
-                CONNECTION TERMINATED.<br>504 GATEWAY UNAVAILABLE.
+                CONNECTION TERMINATED.<br>504 GATEWAY UNAVAILABLE.<br><span style="font-size: 1rem; margin-top: 20px;">Rebooting...</span>
             </div>
         `;
+
+    setTimeout(() => { location.reload(); }, 3000);
   }, 10000);
 }
 
@@ -2033,9 +2045,10 @@ function triggerAetherSummon() {
     }
 
     // Start the debate with Aether included
+    elements.messageInput.value = '';
+    elements.messageInput.disabled = true;
+    elements.sendBtn.disabled = true;
     chatHistory.push({ role: 'user', content: 'Debate my arrival.' });
-    elements.messageInput.disabled = false;
-    elements.sendBtn.disabled = false;
     runRoundtableCycle();
 
   }, 6000);
