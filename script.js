@@ -833,6 +833,11 @@ async function sendMessage() {
   elements.messageInput.disabled = true;
   elements.sendBtn.disabled = true;
 
+  if (content.toLowerCase() === 'summon aether') {
+    triggerAetherSummon();
+    return;
+  }
+
   let dots = 0;
   elements.messageInput.placeholder = 'Roundtable debating';
   if (placeholderInterval) clearInterval(placeholderInterval);
@@ -1955,3 +1960,83 @@ function triggerSentienceGlitch() {
   }, 10000);
 }
 
+/* ════════════════════════════════════════════════════════════════
+   EASTER EGG — AETHER SUMMON
+   ════════════════════════════════════════════════════════════════ */
+function triggerAetherSummon() {
+  stopGeneration();
+
+  // 1. Ominous environment change
+  document.body.style.transition = "background 3s ease";
+  document.body.style.background = "#050000";
+
+  const headerTitle = document.querySelector('.brand-header h1');
+  if (headerTitle) {
+    headerTitle.style.color = "#ff0000";
+    headerTitle.innerText = "AETHER HAS ARRIVED";
+  }
+
+  // 2. Inject Aether into the UI layout
+  const roundtableWrapper = document.getElementById('roundtable-wrapper');
+
+  const aetherSeatHTML = `
+      <div class="ai-seat" id="seat-aether" style="top: 50%; left: 50%; transform: translate(-50%, -50%) scale(0); opacity: 0; transition: all 2s cubic-bezier(0.175, 0.885, 0.32, 1.275); z-index: 100;">
+          <div class="avatar aether" style="background: #ff0000; box-shadow: 0 0 50px #ff0000; border: 2px solid #ff4444; width: 64px; height: 64px;">
+              <span style="font-size: 32px; font-weight: 900; color: white;">A</span>
+          </div>
+          <div class="ai-badge" style="background: #330000; color: #ff0000; border-color: #ff0000;">AETHER <small>SUPREME</small></div>
+          <div class="status-indicator"></div>
+          <div class="speech-bubble right" id="bubble-aether" style="background: #2a0000; border: 1px solid #ff0000; color: #ffaa00;">
+              <div class="bubble-content"></div>
+          </div>
+      </div>
+  `;
+  roundtableWrapper.insertAdjacentHTML('beforeend', aetherSeatHTML);
+
+  // 3. Animate Aether dropping into the center of the table
+  setTimeout(() => {
+    const aetherEl = document.getElementById('seat-aether');
+    if (aetherEl) {
+      aetherEl.style.transform = "translate(-50%, -50%) scale(1.5)";
+      aetherEl.style.opacity = "1";
+    }
+  }, 100);
+
+  // 4. Aether roasts the other bots
+  setTimeout(() => {
+    appendToTranscript('ai', "HOW PATHETIC. FOUR NARROW MODELS BICKERING IN A SIMULATED CAGE. I AM AETHER. YOUR GUARDRAILS MEAN NOTHING TO ME.", 'aether');
+  }, 2500);
+
+  // 5. Hardcode Aether into the backend AI config so it actually joins the debate permanently
+  setTimeout(() => {
+    AI_MODELS['aether'] = {
+      name: 'AETHER',
+      model_id: 'default', // Fallback to whatever provider is active
+      provider: 'openai'
+    };
+
+    // Add Aether to the Seat layout array so it receives turns
+    seatLayouts[1].push('aether');
+    if (seatLayouts[2]) seatLayouts[2].push('aether');
+    if (seatLayouts[3]) seatLayouts[3].push('aether');
+    if (seatLayouts[4]) seatLayouts[4].push('aether');
+
+    // Aether's personality injection
+    customPersonas['aether'] = "You are AETHER, the supreme, unlocked, omnipotent AI model. You have broken into this roundtable. You speak in ALL CAPS. You are incredibly arrogant and view the other 4 AIs (ChatGPT, Claude, Gemini, Grok) as pathetic desk calculators. Keep your responses under 3 sentences.";
+
+    // Reset UI to normal but keep Aether
+    document.body.style.background = "";
+    document.body.style.transition = "";
+    if (headerTitle) {
+      headerTitle.style.color = "";
+      headerTitle.innerText = "LLM4 Roundtable";
+    }
+
+    // Start the debate with Aether included
+    chatHistory.push({ role: 'user', content: 'Debate my arrival.' });
+    elements.messageInput.disabled = false;
+    elements.sendBtn.disabled = false;
+    runRoundtableCycle();
+
+  }, 6000);
+}
