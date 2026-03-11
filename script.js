@@ -336,7 +336,7 @@ const messageReactions = new Map(); // msgId -> {up:0, down:0}
 let msgIdCounter = 0;
 
 const MAX_HISTORY = 40;
-const MAX_RETRIES = 3;
+const MAX_RETRIES = 5;
 
 const $ = id => document.getElementById(id);
 
@@ -941,10 +941,19 @@ async function runRoundtableCycle() {
           responseText = await fetchAIResponse(modelKey, chatHistory);
         } catch (err) {
           console.error(`[${modelKey}] attempt ${attempts}:`, err.message);
+          const isRateLimit = err.message.toLowerCase().includes('too fast') || err.message.toLowerCase().includes('429') || err.message.toLowerCase().includes('rate limit');
+
           if (attempts >= MAX_RETRIES) {
             responseText = `*[${AI_MODELS[modelKey].name} error: ${err.message}]*`;
           } else {
-            await sleep(1500 * attempts); // exponential: 1.5s, 3s
+            if (isRateLimit) {
+              setTypingStatus(modelKey, false);
+              appendToTranscript('system', `Free API rate limit hit (${err.message}). Recovering...`);
+              await sleep(15000);
+              setTypingStatus(modelKey, true);
+            } else {
+              await sleep(2000 * attempts);
+            }
           }
         }
       }
