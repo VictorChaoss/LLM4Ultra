@@ -942,7 +942,7 @@ async function runRoundtableCycle() {
         } catch (err) {
           console.error(`[${modelKey}] attempt ${attempts}:`, err.message);
           if (attempts >= MAX_RETRIES) {
-            responseText = `*[${AI_MODELS[modelKey].name} is unavailable — skipping]*`;
+            responseText = `*[${AI_MODELS[modelKey].name} error: ${err.message}]*`;
           } else {
             await sleep(1500 * attempts); // exponential: 1.5s, 3s
           }
