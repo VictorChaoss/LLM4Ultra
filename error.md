@@ -12,3 +12,5 @@
 - **[2026-03-05] Victor's LLM4Ultra Merge — Demo Mode Lockout:** The original `fetchAIResponse` required `SESSION.apiKey` even when `isHosted` was true, which would block Vercel-side keys. Fixed by adding `!IS_HOSTED` to the demo mode guard.
 - **[2026-03-05] Grok 3 Migration:** Upgraded Grok configuration from `grok-beta` to `grok-3` and `grok-3-mini` across all seat models and provider mappings.
 - **[2026-03-05] Legacy File Risk:** Confirmed `vercel_script.js`, `vercel_app.html`, and `vercel_style.css` are persistent security risks due to old `localStorage` key handling. Scheduled for deletion.
+- **[2026-03-10] Vercel API Rate Limit Adjustment:** Increased `MAX_REQUESTS_PER_HOUR` in `api/chat.js` from 20 to 200, and added a developer toggle `ENABLE_RATE_LIMIT = true` to allow bypassing IP limits entirely.
+- **[2026-03-10] Grok API Timeout Analysis:** Confirmed Grok timeouts (`[Grok is unavailable — skipping]`) are isolated provider-side rate limits (503s from x.AI). The system grace-skips correctly without crashing the frontend.

@@ -48,3 +48,7 @@
   - VERIFIED: Cleared browser state and confirmed 4-seat default (ChatGPT, Claude, Gemini, Grok) is persistent.
   - TESTED: Send 'Robot Joke' prompt; all 4 agents responded with distinct logic-constrained personas.
   - RATED: ANON AI successfully scored the round. Rankings panel updated live. Logic confirmed as production-ready.
+[2026-03-10T19:00:00-07:00] API LIMIT ADJUSTMENT:
+  - ADDED: `ENABLE_RATE_LIMIT` developer toggle in `api/chat.js`.
+  - INCREASED: Vercel serverless rate limit bumped from 20 to 200 requests per hour.
+  - TESTED: Live deployment functionality and backend security verified using Browser Subagent against Victor's live site (llm4.xyz).

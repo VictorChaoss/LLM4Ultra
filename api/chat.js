@@ -53,7 +53,8 @@
  */
 
 // ─── RATE LIMIT CONFIG (dev can change these) ─────────────────
-const MAX_REQUESTS_PER_HOUR = 20;   // requests per IP per hour
+const ENABLE_RATE_LIMIT = true;      // Set to false to completely turn off IP limiting
+const MAX_REQUESTS_PER_HOUR = 200;   // Increased from 20 (approx 50 debates/hr)
 const MAX_TOKENS_PER_REQUEST = 300;  // max tokens per API call
 const RATE_WINDOW_MS = 60 * 60 * 1000; // 1 hour window
 
@@ -185,17 +186,19 @@ export default async function handler(req, res) {
   }
 
   // ── Rate limiting ────────────────────────────────────────────
-  const ip = req.headers['x-forwarded-for']?.split(',')[0]?.trim()
-    || req.socket?.remoteAddress
-    || 'unknown';
+  if (ENABLE_RATE_LIMIT) {
+    const ip = req.headers['x-forwarded-for']?.split(',')[0]?.trim()
+      || req.socket?.remoteAddress
+      || 'unknown';
 
-  const rate = getRateStatus(ip);
-  if (!rate.allowed) {
-    Object.keys(corsHeaders).forEach(k => res.setHeader(k, corsHeaders[k]));
-    return res.status(429).json({
-      error: `Rate limit exceeded. Max ${MAX_REQUESTS_PER_HOUR} requests per hour. Try again later.`,
-      retryAfter: RATE_WINDOW_MS / 1000,
-    });
+    const rate = getRateStatus(ip);
+    if (!rate.allowed) {
+      Object.keys(corsHeaders).forEach(k => res.setHeader(k, corsHeaders[k]));
+      return res.status(429).json({
+        error: `Rate limit exceeded. Max ${MAX_REQUESTS_PER_HOUR} requests per hour. Try again later.`,
+        retryAfter: RATE_WINDOW_MS / 1000,
+      });
+    }
   }
 
   // Enhanced rate limiting — Anon AI
