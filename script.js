@@ -862,16 +862,14 @@ async function sendMessage() {
   await runRoundtableCycle();
 }
 
-// A2A: Detect mentions naturally (e.g. "Claude", "Gemini")
+// A2A: Detect mentions like @chatgpt, @claude
 function detectMentions(text) {
   const mentions = [];
   if (!text) return mentions;
   const lowerText = text.toLowerCase();
   AGENT_ORDER.forEach(modelKey => {
     const name = AI_MODELS[modelKey].name.toLowerCase();
-    // Check for explicit @ tag or word boundary natural mention
-    const regex = new RegExp(`(?:@${name}|@${modelKey}|\\b${name}\\b|\\b${modelKey}\\b)`);
-    if (regex.test(lowerText)) {
+    if (lowerText.includes(`@${name}`) || lowerText.includes(`@${modelKey}`)) {
       if (!mentions.includes(modelKey)) mentions.push(modelKey);
     }
   });
@@ -881,22 +879,8 @@ function detectMentions(text) {
 // A2A: Highlight mentions in HTML
 function highlightMentions(html) {
   if (!html) return html;
-
-  // Highlight explicit @ tags if user typed them
-  let highlighted = html.replace(/(^|[^a-zA-Z0-9_])@([a-zA-Z0-9_-]+)/g, '$1<span class="a2a-mention">@$2</span>');
-
-  // Also highlight natural names for active bots safely ignoring HTML tags
-  AGENT_ORDER.forEach(modelKey => {
-    const name = AI_MODELS[modelKey].name;
-    // Match HTML tags OR the name. If it's a tag, return it untouched.
-    const nameRegex = new RegExp(`(<[^>]*>)|(\\b${name}\\b)`, 'gi');
-    highlighted = highlighted.replace(nameRegex, (match, tagGroup, nameGroup) => {
-      if (tagGroup) return tagGroup; // Preserve HTML tags
-      return `<span class="a2a-mention">${nameGroup}</span>`;
-    });
-  });
-
-  return highlighted;
+  // Match @Word but avoid matching inside HTML tags (like href="mailto:...")
+  return html.replace(/(^|[^a-zA-Z0-9_])@([a-zA-Z0-9_-]+)/g, '$1<span class="a2a-mention">@$2</span>');
 }
 
 // Roundtable cycle with A2A queue, retry, history cap
