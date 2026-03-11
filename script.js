@@ -1098,11 +1098,16 @@ async function fetchAIResponse(modelKey, history) {
     }
     if (!resp.ok) {
       const d = await resp.json().catch(() => ({}));
-      throw new Error(d.error || `Server error ${resp.status}`);
+      const errorMsg = d.error || d.message || `HTTP ${resp.status} ${resp.statusText}`;
+      throw new Error(`API Error: ${errorMsg}`);
     }
     const data = await resp.json();
-    const result = data.choices?.[0]?.message?.content || '';
-    logRequest(modelKey, JSON.stringify(messages).substring(0, 200), result, Date.now());
+    if (!data || !data.choices || !data.choices[0] || !data.choices[0].message) {
+      console.error("[fetchAIResponse] Malformed response:", JSON.stringify(data));
+      throw new Error("Invalid response from API");
+    }
+    const result = data.choices[0].message.content || '';
+    if (typeof logRequest === 'function') logRequest(modelKey, JSON.stringify(messages).substring(0, 200), result, Date.now());
     return result;
   }
 
