@@ -855,7 +855,20 @@ async function sendMessage() {
     await runResearchRound(content);
   }
 
-  await runRoundtableCycle();
+  try {
+    await runRoundtableCycle();
+  } finally {
+    if (placeholderInterval) { clearInterval(placeholderInterval); placeholderInterval = null; }
+    isGenerating = false; isPaused = false;
+    elements.sendBtn.disabled = false;
+    elements.messageInput.disabled = false;
+    elements.messageInput.placeholder = 'Address the roundtable...';
+    lockControls(false);
+    elements.stopBtn.style.display = 'none';
+    const pauseBtn = document.getElementById('pause-btn');
+    if (FLAGS.pause && pauseBtn) pauseBtn.style.display = 'none';
+    if (window.innerWidth > 768) elements.messageInput.focus();
+  }
 }
 
 // A2A: Detect mentions like @chatgpt, @claude
@@ -997,18 +1010,9 @@ async function runRoundtableCycle() {
       await runRoundtableCycle();
       return;
     }
-
-  } finally {
-    if (placeholderInterval) { clearInterval(placeholderInterval); placeholderInterval = null; }
-    isGenerating = false; isPaused = false;
-    elements.sendBtn.disabled = false;
-    elements.messageInput.disabled = false;
-    elements.messageInput.placeholder = 'Address the roundtable...';
-    lockControls(false);
-    elements.stopBtn.style.display = 'none';
-    const pauseBtn = document.getElementById('pause-btn');
-    if (FLAGS.pause && pauseBtn) pauseBtn.style.display = 'none';
-    if (window.innerWidth > 768) elements.messageInput.focus();
+  } catch (error) {
+    console.error("Roundtable error:", error);
+    appendToTranscript('system', "A fatal error occurred in the debate loop.");
   }
 }
 
@@ -1723,7 +1727,7 @@ const escHtml = s => String(s)
    ░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░
    ANON AI ADDITIONS — v3.1
    ░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░
-
+ 
    OWNERSHIP NOTE:
    ┌─────────────────────────────────────────────────────────────┐
    │  ORIGINAL PROJECT: Aksa AI — all code above this block     │
@@ -1732,7 +1736,7 @@ const escHtml = s => String(s)
    │  All flags default to false. Safe to ship immediately.     │
    │  Enable features one at a time by flipping flags to true.  │
    └─────────────────────────────────────────────────────────────┘
-
+ 
    FEATURES:
    ① FUTURE_AGENT_MODE   — master switch (default: false)
    ② ENABLE_LOGGING      — prompt/response logger (default: false)
