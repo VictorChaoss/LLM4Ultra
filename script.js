@@ -894,15 +894,24 @@ async function runRoundtableCycle() {
     // A2A: Initialize queue based on the user's message
     const lastMsg = chatHistory[chatHistory.length - 1]?.content || "";
     let queue = detectMentions(lastMsg);
-    if (queue.length === 0) queue = [...AGENT_ORDER]; // Default to all if no tags
+
+    // Add any remaining unpinged bots to the back of the queue so everyone gets one turn
+    AGENT_ORDER.forEach(k => { if (!queue.includes(k)) queue.push(k); });
 
     let loopCount = 0;
-    const MAX_AUTO_LOOPS = 4; // Prevent infinite LLM loops
+    const MAX_AUTO_LOOPS = AGENT_ORDER.length; // Max one turn per bot per round
+    const spokenThisRound = new Set(); // Track who has spoken to prevent double-dipping
 
     while (queue.length > 0 && !shouldStop) {
       if (loopCount >= MAX_AUTO_LOOPS) break;
+
       const modelKey = queue.shift();
+
+      // If a bot was tagged multiple times (e.g. by two different people), skip their extra turn
+      if (spokenThisRound.has(modelKey)) continue;
+
       loopCount++;
+      spokenThisRound.add(modelKey);
 
       while (isPaused && !shouldStop) await sleep(200);
       if (shouldStop) break;
@@ -942,9 +951,10 @@ async function runRoundtableCycle() {
 
       // A2A: Check for tags in the AI's response to continue the autonomous loop
       const nextMentions = detectMentions(responseText);
+
       // Process mentions in reverse so the first mentioned bot ends up at the very front
       [...nextMentions].reverse().forEach(mention => {
-        if (AGENT_ORDER.includes(mention)) {
+        if (AGENT_ORDER.includes(mention) && !spokenThisRound.has(mention)) {
           const existingIdx = queue.indexOf(mention);
           if (existingIdx !== -1) queue.splice(existingIdx, 1);
           queue.unshift(mention); // Jump to the front of the line
