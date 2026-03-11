@@ -3,10 +3,13 @@
 
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0, minimum-scale=0.8, maximum-scale=1.0, user-scalable=no">
+    <meta name="viewport"
+        content="width=device-width, initial-scale=1.0, minimum-scale=0.8, maximum-scale=1.0, user-scalable=no">
     <style>
-      /* Prevent browser zoom from breaking the layout */
-      html { touch-action: pan-x pan-y; }
+        /* Prevent browser zoom from breaking the layout */
+        html {
+            touch-action: pan-x pan-y;
+        }
     </style>
     <title>LLM4</title>
     <link rel="icon" type="image/png" href="logo.png">
@@ -80,27 +83,13 @@
             </div>
 
             <div class="transcript-container" id="transcript-container">
-                <div class="transcript-msg system" style="line-height:1.7">
-                    <div
-                        style="font-size:0.8rem;letter-spacing:0.12em;text-transform:uppercase;color:#6366f1;font-weight:700;margin-bottom:0.4rem;">
-                        ⬡ LLM4 ROUNDTABLE — v5.8 DEPLOYED</div>
-                    <div style="color:#a5b4fc;font-size:0.78rem;margin-bottom:0.6rem;">Multi-agent AI debate platform ·
-                        All systems operational</div>
-                    <div
-                        style="display:grid;grid-template-columns:1fr 1fr;gap:0.25rem 1rem;font-size:0.73rem;color:#94a3b8;margin-bottom:0.6rem;">
-                        <span>💬 6 Debate Modes</span>
-                        <span>🔍 Research Round</span>
-                        <span>👍 Reactions</span>
-                        <span>⏱ Response times</span>
-                        <span>✦ Custom Personas</span>
-                        <span>⚡ Speed Control</span>
-                        <span>🤖 Auto-Pilot</span>
-                        <span>🎙 Voice TTS/STT</span>
+                <div class="transcript-msg system" style="text-align: center; padding: 2rem 1rem;">
+                    <div style="color:#64748b; font-size: 0.8rem; font-weight: 500; letter-spacing: 0.05em;">
+                        <i class="fa-solid fa-bolt" style="color: #6366f1; margin-right: 6px;"></i>
+                        SYSTEMS ONLINE
                     </div>
-                    <div
-                        style="font-size:0.72rem;color:#64748b;border-top:1px solid rgba(255,255,255,0.06);padding-top:0.5rem;margin-top:0.2rem;">
-                        Enter a topic below — or hit <strong style="color:#a5b4fc">Random Topic</strong> to let the
-                        roundtable decide.
+                    <div style="font-size:0.75rem; color:#475569; margin-top:0.5rem;">
+                        Enter a topic below to initiate the roundtable.
                     </div>
                 </div>
             </div>
@@ -256,11 +245,15 @@
             </div>
             <div class="modal-body">
                 <div class="form-group">
-                    <label for="provider-select">API Provider <span style="background:linear-gradient(135deg,#6366f1,#a855f7);color:#fff;font-size:0.65rem;padding:2px 8px;border-radius:20px;margin-left:8px;font-weight:600;letter-spacing:0.05em;">🔜 COMING SOON</span></label>
-                    <select id="provider-select" class="provider-select" disabled style="opacity:0.5;cursor:not-allowed;">
+                    <label for="provider-select">API Provider <span
+                            style="background:linear-gradient(135deg,#6366f1,#a855f7);color:#fff;font-size:0.65rem;padding:2px 8px;border-radius:20px;margin-left:8px;font-weight:600;letter-spacing:0.05em;">🔜
+                            COMING SOON</span></label>
+                    <select id="provider-select" class="provider-select" disabled
+                        style="opacity:0.5;cursor:not-allowed;">
                         <option value="openrouter" selected>OpenRouter (All Models)</option>
                     </select>
-                    <small class="help-text" style="color:#a855f7;">Multi-provider support coming soon. OpenRouter gives you access to all models.</small>
+                    <small class="help-text" style="color:#a855f7;">Multi-provider support coming soon. OpenRouter gives
+                        you access to all models.</small>
                 </div>
                 <div class="form-group">
                     <label for="api-key-input">API Key <span class="label-hint">— stored in memory only</span></label>
@@ -275,11 +268,15 @@
                 </div>
 
                 <div class="form-group">
-                    <label for="seat-count-select">Number of AI Seats <span style="background:linear-gradient(135deg,#6366f1,#a855f7);color:#fff;font-size:0.65rem;padding:2px 8px;border-radius:20px;margin-left:8px;font-weight:600;letter-spacing:0.05em;">🔜 COMING SOON</span></label>
-                    <select id="seat-count-select" class="provider-select" disabled style="opacity:0.5;cursor:not-allowed;">
+                    <label for="seat-count-select">Number of AI Seats <span
+                            style="background:linear-gradient(135deg,#6366f1,#a855f7);color:#fff;font-size:0.65rem;padding:2px 8px;border-radius:20px;margin-left:8px;font-weight:600;letter-spacing:0.05em;">🔜
+                            COMING SOON</span></label>
+                    <select id="seat-count-select" class="provider-select" disabled
+                        style="opacity:0.5;cursor:not-allowed;">
                         <option value="4" selected>4 Seats</option>
                     </select>
-                    <small class="help-text" style="color:#a855f7;">5-8 seat debates coming soon. Currently locked to the original 4-agent roundtable.</small>
+                    <small class="help-text" style="color:#a855f7;">5-8 seat debates coming soon. Currently locked to
+                        the original 4-agent roundtable.</small>
                 </div>
 
                 <div class="modal-divider"></div>
