@@ -1043,7 +1043,11 @@ async function fetchAIResponse(modelKey, history) {
     // If THIS model sent the message previously, label it as 'assistant' so it remembers its own thoughts.
     // If ANOTHER model sent it, label it as 'user' so it knows it was an external voice.
     const speakerName = msg.agent ? AI_MODELS[msg.agent]?.name : 'AI';
-    const parsedContent = `[${speakerName} said]: ${msg.content.replace(/^\[.*?\]: /, '')}`;
+
+    // Ensure the content is ALWAYS a flat string. 
+    // OpenRouter / DeepSeek crash if some messages are arrays and some are strings in the same thread.
+    const rawText = Array.isArray(msg.content) ? msg.content.find(c => c.type === 'text')?.text || '' : msg.content;
+    const parsedContent = `[${speakerName} said]: ${rawText.replace(/^\[.*?\]: /, '')}`;
 
     return {
       role: msg.agent === modelKey ? 'assistant' : 'user',
