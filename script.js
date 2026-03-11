@@ -1034,12 +1034,16 @@ async function fetchAIResponse(modelKey, history) {
           : msg.content,
       };
     }
-    // For AI turns: use 'user' role with clear speaker label so all models see the full thread
-    // (Most providers don't support multiple assistants; 'user' role preserves visibility)
+
+    // For AI turns: 
+    // If THIS model sent the message previously, label it as 'assistant' so it remembers its own thoughts.
+    // If ANOTHER model sent it, label it as 'user' so it knows it was an external voice.
     const speakerName = msg.agent ? AI_MODELS[msg.agent]?.name : 'AI';
+    const parsedContent = `[${speakerName} said]: ${msg.content.replace(/^\[.*?\]: /, '')}`;
+
     return {
-      role: 'user',
-      content: `[${speakerName} said]: ${msg.content.replace(/^\[.*?\]: /, '')}`,
+      role: msg.agent === modelKey ? 'assistant' : 'user',
+      content: parsedContent,
     };
   });
 
