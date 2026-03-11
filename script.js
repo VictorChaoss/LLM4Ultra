@@ -1047,9 +1047,8 @@ async function fetchAIResponse(modelKey, history) {
     };
   });
 
-  // A2A: Inject tag instructions so AIs know they are in a chat room
-  const availableTags = AGENT_ORDER.filter(k => k !== modelKey).map(k => `@${AI_MODELS[k].name}`).join(', ');
-  const tagInstructions = `\n\nINTERACTIVE CHAT RULES: You can pass the mic to a specific AI by tagging them at the end of your response like "@Name". Active tags: ${availableTags}.`;
+  // A2A: Chat rules - no explicit tagging
+  const tagInstructions = `\n\nINTERACTIVE CHAT RULES: You are in a shared roundtable. Address others naturally by name. Do NOT use "@" tags.`;
 
   // Inject debate mode constraint after persona (if not free mode)
   const modeConstraint = DEBATE_MODES[currentDebateMode]?.constraint;
