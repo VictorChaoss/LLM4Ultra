@@ -905,11 +905,17 @@ async function runRoundtableCycle() {
     while (queue.length > 0 && !shouldStop) {
       if (loopCount >= MAX_AUTO_LOOPS) break;
 
-      const modelKey = queue.shift();
+      // Peek at the next bot without permanently deleting it from the line yet
+      const modelKey = queue[0];
 
-      // If a bot was tagged multiple times (e.g. by two different people), skip their extra turn
-      if (spokenThisRound.has(modelKey)) continue;
+      // If a bot was tagged multiple times (e.g. by two different people), remove it and skip
+      if (spokenThisRound.has(modelKey)) {
+        queue.shift();
+        continue;
+      }
 
+      // It's their turn. Consume them from the queue.
+      queue.shift();
       loopCount++;
       spokenThisRound.add(modelKey);
 
