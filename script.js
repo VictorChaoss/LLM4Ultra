@@ -372,6 +372,7 @@ function init() {
   elements.stopBtn = document.getElementById('stop-btn');
   elements.autopilotToggle = document.getElementById('autopilot-toggle');
   elements.layoutToggle = document.getElementById('layout-toggle');
+  elements.oracleBtn = document.getElementById('oracle-btn');
 
   elements.messageInput.addEventListener('input', handleTextareaResize);
   elements.messageInput.addEventListener('keydown', handleKeyDown);
@@ -391,6 +392,18 @@ function init() {
       elements.stopBtn.style.display = e.target.checked ? 'flex' : 'none';
     }
   });
+
+  if (elements.oracleBtn) {
+    elements.oracleBtn.addEventListener('click', () => {
+      elements.messageInput.value = '';
+      elements.messageInput.placeholder = 'Paste Solana CA here...';
+      elements.messageInput.focus();
+      
+      // Visual feedback
+      elements.oracleBtn.classList.add('pulse');
+      setTimeout(() => elements.oracleBtn.classList.remove('pulse'), 500);
+    });
+  }
 
   if (elements.layoutToggle) {
     elements.layoutToggle.addEventListener('change', (e) => {
@@ -850,10 +863,11 @@ async function sendMessage() {
   // Pump or Dump Oracle: Intercept Solana Contract Addresses
   const solanaCaRegex = /^[1-9A-HJ-NP-Za-km-z]{32,44}$/;
   let finalContent = content;
+  const cleanedContent = content.trim();
 
-  if (solanaCaRegex.test(content)) {
-    appendToTranscript('system', `🔍 <strong>Oracle Detected CA:</strong> Fetching live on-chain metrics for <code>${content}</code> from DexScreener...`);
-    const tokenData = await fetchTokenData(content);
+  if (solanaCaRegex.test(cleanedContent)) {
+    appendToTranscript('system', `🔍 <strong>Oracle Detected CA:</strong> Fetching live on-chain metrics for <code>${cleanedContent}</code> from DexScreener...`);
+    const tokenData = await fetchTokenData(cleanedContent);
     
     if (tokenData) {
       finalContent = `[ORACLE INJECTION] The user just submitted the token Contract Address: ${content}. Here is the live DexScreener data:\n` +
