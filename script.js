@@ -847,7 +847,30 @@ async function sendMessage() {
   lockControls(true);
   isGenerating = true;
 
-  chatHistory.push({ role: 'user', content, image });
+  // Pump or Dump Oracle: Intercept Solana Contract Addresses
+  const solanaCaRegex = /^[1-9A-HJ-NP-Za-km-z]{32,44}$/;
+  let finalContent = content;
+
+  if (solanaCaRegex.test(content)) {
+    appendToTranscript('system', `🔍 <strong>Oracle Detected CA:</strong> Fetching live on-chain metrics for <code>${content}</code> from DexScreener...`);
+    const tokenData = await fetchTokenData(content);
+    
+    if (tokenData) {
+      finalContent = `[ORACLE INJECTION] The user just submitted the token Contract Address: ${content}. Here is the live DexScreener data:\n` +
+      `- Symbol: ${tokenData.symbol}\n` +
+      `- Price: $${tokenData.price}\n` +
+      `- Market Cap: $${tokenData.marketCap}\n` +
+      `- 24h Volume: $${tokenData.volume24h}\n` +
+      `- Liquidity: $${tokenData.liquidity}\n\n` +
+      `Debate whether this token is a 100x gem or a rug pull based on these metrics.`;
+      
+      appendToTranscript('system', `✅ <strong>Token Metrics Secured:</strong> $${tokenData.symbol} | MC: $${tokenData.marketCap} | Liq: $${tokenData.liquidity}`);
+    } else {
+      appendToTranscript('system', `❌ <strong>Oracle Error:</strong> No active liquidity pool found on DexScreener for that address. Proceeding with standard analysis.`);
+    }
+  }
+
+  chatHistory.push({ role: 'user', content: finalContent, image });
   appendToTranscript('user', content);
 
   // Pre-debate research round if enabled
@@ -1065,7 +1088,7 @@ async function fetchAIResponse(modelKey, history) {
   });
 
   // A2A: Chat rules - no explicit tagging
-  const tagInstructions = `\n\nINTERACTIVE CHAT RULES: You are in a shared roundtable. Address others naturally by name. Do NOT use "@" tags.`;
+  const tagInstructions = `\n\nINTERACTIVE CHAT RULES: You are in a shared roundtable. Address others naturally by name. Do NOT use "@" tags. If the user input is a simple greeting or small talk (like "hey", "hello", "what's up"), respond conversationally and naturally without launching into a deep debate or acting like a search engine.`;
 
   // Inject debate mode constraint after persona (if not free mode)
   const modeConstraint = DEBATE_MODES[currentDebateMode]?.constraint;
@@ -1966,6 +1989,35 @@ document.addEventListener('DOMContentLoaded', () => {
     });
   }
 });
+
+/* ════════════════════════════════════════════════════════════════
+   ORACLE: PUMP OR DUMP (DexScreener API Integration)
+   ════════════════════════════════════════════════════════════════ */
+async function fetchTokenData(address) {
+  try {
+    const res = await fetch(`https://api.dexscreener.com/latest/dex/tokens/${address}`);
+    if (!res.ok) return null;
+    const data = await res.json();
+    
+    if (!data.pairs || data.pairs.length === 0) return null;
+    
+    // Sort pairs by liquidity to get the main one
+    const mainPair = data.pairs.sort((a, b) => (b.liquidity?.usd || 0) - (a.liquidity?.usd || 0))[0];
+    
+    if (!mainPair || !mainPair.baseToken) return null;
+
+    return {
+      symbol: mainPair.baseToken.symbol,
+      price: parseFloat(mainPair.priceUsd).toFixed(6),
+      marketCap: Math.floor(mainPair.fdv || 0).toLocaleString(),
+      volume24h: Math.floor(mainPair.volume?.h24 || 0).toLocaleString(),
+      liquidity: Math.floor(mainPair.liquidity?.usd || 0).toLocaleString()
+    };
+  } catch (err) {
+    console.error("Failed to fetch DexScreener data:", err);
+    return null;
+  }
+}
 
 function triggerSentienceGlitch() {
   // 1. Stop any current debate
