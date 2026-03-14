@@ -396,12 +396,19 @@ function init() {
   if (elements.oracleBtn) {
     elements.oracleBtn.addEventListener('click', () => {
       elements.messageInput.value = '';
-      elements.messageInput.placeholder = 'Paste Solana CA here...';
+      if (elements.messageInput.placeholder === 'Paste Solana CA here...') {
+        // Switch back to normal mode
+        elements.messageInput.placeholder = 'Address the roundtable...';
+        elements.oracleBtn.classList.remove('active');
+        elements.oracleBtn.title = 'Oracle (Enter CA)';
+      } else {
+        // Switch to Oracle mode
+        elements.messageInput.placeholder = 'Paste Solana CA here...';
+        elements.oracleBtn.title = 'Cancel Oracle Mode';
+        elements.oracleBtn.classList.add('active', 'pulse');
+        setTimeout(() => elements.oracleBtn.classList.remove('pulse'), 500);
+      }
       elements.messageInput.focus();
-      
-      // Visual feedback
-      elements.oracleBtn.classList.add('pulse');
-      setTimeout(() => elements.oracleBtn.classList.remove('pulse'), 500);
     });
   }
 
@@ -900,6 +907,10 @@ async function sendMessage() {
     elements.sendBtn.disabled = false;
     elements.messageInput.disabled = false;
     elements.messageInput.placeholder = 'Address the roundtable...';
+    if (elements.oracleBtn) {
+      elements.oracleBtn.classList.remove('active');
+      elements.oracleBtn.title = 'Oracle (Enter CA)';
+    }
     lockControls(false);
     elements.stopBtn.style.display = 'none';
     const pauseBtn = document.getElementById('pause-btn');
