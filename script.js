@@ -867,12 +867,13 @@ async function sendMessage() {
   lockControls(true);
   isGenerating = true;
 
-  // Pump or Dump Oracle: Intercept Solana Contract Addresses
-  const solanaCaRegex = /^[1-9A-HJ-NP-Za-km-z]{32,44}$/;
+  // Pump or Dump Oracle: Intercept Solana Contract Addresses (handles raw CA or Dex/Pump URLs)
+  const solanaCaRegex = /[1-9A-HJ-NP-Za-km-z]{32,44}/;
   let finalContent = content;
-  const cleanedContent = content.trim();
+  const caMatch = content.match(solanaCaRegex);
+  const cleanedContent = caMatch ? caMatch[0] : null;
 
-  if (solanaCaRegex.test(cleanedContent)) {
+  if (cleanedContent) {
     appendToTranscript('system', `🔍 <strong>Oracle Detected CA:</strong> Fetching live on-chain metrics for <code>${cleanedContent}</code> from DexScreener...`);
     const tokenData = await fetchTokenData(cleanedContent);
     
