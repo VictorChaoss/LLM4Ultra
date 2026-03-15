@@ -1985,18 +1985,21 @@ document.addEventListener('DOMContentLoaded', () => {
         if (currentOracleMode === 'pump') {
           oracleIcon.className = 'fa-solid fa-pills';
           oracleBtn.title = 'Oracle Mode: Pump.fun (CA)';
+          elements.messageInput.placeholder = 'Paste Solana CA...';
         } else if (currentOracleMode === 'tradfi') {
           oracleIcon.className = 'fa-solid fa-chart-line';
           oracleBtn.title = 'Oracle Mode: TradFi (Ticker)';
+          elements.messageInput.placeholder = 'Enter TradFi Ticker (e.g. AAPL, SPY, GOLD)...';
         } else if (currentOracleMode === 'perps') {
           oracleIcon.className = 'fa-solid fa-fire';
           oracleBtn.title = 'Oracle Mode: Perps (Funding)';
+          elements.messageInput.placeholder = 'Enter Crypto Ticker (e.g. BTC, SOL, DOGE)...';
         }
         
         // Close menu
         oracleMenu.style.display = 'none';
         oracleBtn.classList.add('active'); // Keep the pill looking active to show a mode is selected
-        setTimeout(() => oracleBtn.classList.remove('active'), 500);
+        setTimeout(() => oracleBtn.classList.remove('active'), 1500);
       });
     });
 
