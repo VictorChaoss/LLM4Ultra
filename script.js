@@ -886,7 +886,8 @@ async function sendMessage() {
       `- Market Cap: $${tokenData.marketCap}\n` +
       `- 24h Volume: $${tokenData.volume24h}\n` +
       `- Liquidity: $${tokenData.liquidity}\n\n` +
-      `Debate whether this token is a 100x gem or a rug pull based on these metrics. Reference their liquidity, volume, and market cap explicitly.`;
+      `[MANDATORY RESEARCH]: If you have Web Search capabilities enabled, you MUST immediately search the web and Twitter for the ticker "$${tokenData.symbol}" to discover the lore, memes, and community sentiment behind this coin.\n\n` +
+      `Debate whether this token is a 100x gem or a rug pull based on these metrics AND its lore. Reference their liquidity, volume, market cap, and narrative explicitly.`;
       
       const chartIframe = `<div style="margin-top: 15px; border-radius: 8px; overflow: hidden; width: 100%; height: 350px;">
         <iframe width="100%" height="100%" src="https://dexscreener.com/solana/${cleanedContent}?embed=1&theme=dark&trades=0&info=0" frameborder="0"></iframe>
