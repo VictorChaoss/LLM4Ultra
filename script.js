@@ -879,26 +879,56 @@ async function sendMessage() {
     const extractedCa = caMatch ? caMatch[0] : null;
 
     if (extractedCa) {
-      appendToTranscript('system', `🔍 <strong>Oracle Detected CA:</strong> Fetching live on-chain metrics for <code>${extractedCa}</code> from DexScreener...`);
-      const tokenData = await fetchTokenData(extractedCa);
+      appendToTranscript('system', `🔍 <strong>Oracle Detected CA:</strong> Fetching live metrics and lore for <code>${extractedCa}</code>...`);
+      
+      // Fetch both APIs in parallel
+      const [tokenData, loreData] = await Promise.all([
+        fetchTokenData(extractedCa),
+        fetchPumpFunLore(extractedCa)
+      ]);
       
       if (tokenData) {
-        finalContent = `[ORACLE INJECTION] The user just submitted the token Contract Address: ${content}.\n` +
-        `[CONTEXT] The user says this is a Pump.fun coin or a Solana memecoin. These are highly volatile, community-driven tokens that are often rug pulls but can sometimes 100x. Factor Pump.fun memecoin culture and logic into the debate.\n` +
-        `Here is the live DexScreener data:\n` +
-        `- Symbol: ${tokenData.symbol}\n` +
+        // Build the lore section if available
+        let loreSection = '';
+        if (loreData) {
+          loreSection = `\n[COIN LORE FROM PUMP.FUN]:\n`;
+          if (loreData.description) loreSection += `- Creator's Description: "${loreData.description}"\n`;
+          if (loreData.twitter) loreSection += `- Twitter: ${loreData.twitter}\n`;
+          if (loreData.telegram) loreSection += `- Telegram: ${loreData.telegram}\n`;
+          if (loreData.website) loreSection += `- Website: ${loreData.website}\n`;
+          if (loreData.createdTimestamp) loreSection += `- Launch Date: ${loreData.createdTimestamp}\n`;
+          if (loreData.isCompleted) loreSection += `- Status: 🎓 Graduated to Raydium (liquidity locked)\n`;
+          else loreSection += `- Status: Still on bonding curve (has NOT graduated yet)\n`;
+          if (loreData.marketCapSol) loreSection += `- Pump.fun Market Cap: ${loreData.marketCapSol}\n`;
+        }
+        
+        finalContent = `[ORACLE INJECTION] The user just submitted the Solana Contract Address: ${content}.\n` +
+        `[CONTEXT] This is a Pump.fun memecoin. These are highly volatile, community-driven tokens. Factor Pump.fun memecoin culture into the debate.\n` +
+        `\n[MARKET METRICS FROM DEXSCREENER]:\n` +
+        `- Name: ${tokenData.name || 'Unknown'}\n` +
+        `- Symbol: $${tokenData.symbol}\n` +
         `- Price: $${tokenData.price}\n` +
         `- Market Cap: $${tokenData.marketCap}\n` +
         `- 24h Volume: $${tokenData.volume24h}\n` +
-        `- Liquidity: $${tokenData.liquidity}\n\n` +
-        `[MANDATORY RESEARCH]: If you have Web Search capabilities enabled, you MUST immediately search the web and Twitter for the ticker "$${tokenData.symbol}" to discover the lore, memes, and community sentiment behind this coin.\n\n` +
-        `Debate whether this token is a 100x gem or a rug pull based on these metrics AND its lore. Reference their liquidity, volume, market cap, and narrative explicitly.`;
+        `- Liquidity: $${tokenData.liquidity}\n` +
+        loreSection +
+        `\n[MANDATORY RESEARCH]: If you have Web Search enabled, also search Twitter/X for "$${tokenData.symbol}" or the coin's name to find the latest community sentiment and memes.\n\n` +
+        `Debate whether this token is a 100x gem or a rug pull based on ALL the data above. Explicitly reference the lore/description, liquidity, volume, and whether it has graduated.`;
         
         const chartIframe = `<div style="margin-top: 15px; border-radius: 8px; overflow: hidden; width: 100%; height: 350px;">
           <iframe width="100%" height="100%" src="https://dexscreener.com/solana/${extractedCa}?embed=1&theme=dark&trades=0&info=0" frameborder="0"></iframe>
         </div>`;
         
-        appendToTranscript('system', `✅ <strong>Token Metrics Secured:</strong> $${tokenData.symbol} | MC: $${tokenData.marketCap} | Liq: $${tokenData.liquidity}${chartIframe}`);
+        // Build a rich status message showing what was fetched
+        let statusMsg = `✅ <strong>Oracle Loaded:</strong> $${tokenData.symbol} | MC: $${tokenData.marketCap} | Liq: $${tokenData.liquidity}`;
+        if (loreData?.description) {
+          statusMsg += `<br><em style="opacity:0.7;font-size:0.8em;">📖 Lore: "${loreData.description.slice(0, 120)}${loreData.description.length > 120 ? '...' : ''}"</em>`;
+        }
+        if (loreData?.twitter) statusMsg += ` | <a href="${loreData.twitter}" target="_blank" style="color:var(--accent)">🐦 Twitter</a>`;
+        if (loreData?.telegram) statusMsg += ` | <a href="${loreData.telegram}" target="_blank" style="color:var(--accent)">📢 Telegram</a>`;
+        statusMsg += chartIframe;
+        
+        appendToTranscript('system', statusMsg);
       } else {
         appendToTranscript('system', `❌ <strong>Oracle Error:</strong> No active liquidity pool found on DexScreener for that address. Proceeding with standard analysis.`);
       }
@@ -2185,6 +2215,7 @@ async function fetchTokenData(address) {
 
     return {
       symbol: mainPair.baseToken.symbol,
+      name: mainPair.baseToken.name,
       price: parseFloat(mainPair.priceUsd).toFixed(6),
       marketCap: Math.floor(mainPair.fdv || 0).toLocaleString(),
       volume24h: Math.floor(mainPair.volume?.h24 || 0).toLocaleString(),
@@ -2192,6 +2223,31 @@ async function fetchTokenData(address) {
     };
   } catch (err) {
     console.error("Failed to fetch DexScreener data:", err);
+    return null;
+  }
+}
+
+/* Pump.fun Lore API — fetches the coin's backstory, description, and social links */
+async function fetchPumpFunLore(address) {
+  try {
+    const res = await fetch(`https://frontend-api.pump.fun/coins/${address}`);
+    if (!res.ok) return null;
+    const data = await res.json();
+    if (!data) return null;
+    return {
+      name: data.name || null,
+      symbol: data.symbol || null,
+      description: data.description || null,
+      twitter: data.twitter || null,
+      telegram: data.telegram || null,
+      website: data.website || null,
+      creator: data.creator || null,
+      createdTimestamp: data.created_timestamp ? new Date(data.created_timestamp).toLocaleDateString() : null,
+      marketCapSol: data.market_cap ? `${data.market_cap.toFixed(2)} SOL` : null,
+      isCompleted: data.complete || false,
+    };
+  } catch (err) {
+    console.error("Failed to fetch Pump.fun lore:", err);
     return null;
   }
 }
