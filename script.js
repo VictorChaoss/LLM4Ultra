@@ -877,15 +877,21 @@ async function sendMessage() {
     const tokenData = await fetchTokenData(cleanedContent);
     
     if (tokenData) {
-      finalContent = `[ORACLE INJECTION] The user just submitted the token Contract Address: ${content}. Here is the live DexScreener data:\n` +
+      finalContent = `[ORACLE INJECTION] The user just submitted the token Contract Address: ${content}.\n` +
+      `[CONTEXT] The user says this is a Pump.fun coin or a Solana memecoin. These are highly volatile, community-driven tokens that are often rug pulls but can sometimes 100x. Factor Pump.fun memecoin culture and logic into the debate.\n` +
+      `Here is the live DexScreener data:\n` +
       `- Symbol: ${tokenData.symbol}\n` +
       `- Price: $${tokenData.price}\n` +
       `- Market Cap: $${tokenData.marketCap}\n` +
       `- 24h Volume: $${tokenData.volume24h}\n` +
       `- Liquidity: $${tokenData.liquidity}\n\n` +
-      `Debate whether this token is a 100x gem or a rug pull based on these metrics.`;
+      `Debate whether this token is a 100x gem or a rug pull based on these metrics. Reference their liquidity, volume, and market cap explicitly.`;
       
-      appendToTranscript('system', `✅ <strong>Token Metrics Secured:</strong> $${tokenData.symbol} | MC: $${tokenData.marketCap} | Liq: $${tokenData.liquidity}`);
+      const chartIframe = `<div style="margin-top: 15px; border-radius: 8px; overflow: hidden; width: 100%; height: 350px;">
+        <iframe width="100%" height="100%" src="https://dexscreener.com/solana/${cleanedContent}?embed=1&theme=dark&trades=0&info=0" frameborder="0"></iframe>
+      </div>`;
+      
+      appendToTranscript('system', `✅ <strong>Token Metrics Secured:</strong> $${tokenData.symbol} | MC: $${tokenData.marketCap} | Liq: $${tokenData.liquidity}${chartIframe}`);
     } else {
       appendToTranscript('system', `❌ <strong>Oracle Error:</strong> No active liquidity pool found on DexScreener for that address. Proceeding with standard analysis.`);
     }
@@ -1133,7 +1139,8 @@ async function fetchAIResponse(modelKey, history) {
   }
 
   const timeContext = `\n\n[SYSTEM CLOCK: The current date and time is ${new Date().toLocaleString()}. You are operating in real-time. Do not say you are an AI without access to the current date.]`;
-  const systemContent = personaText + tagInstructions + timeContext + (modeConstraint ? `\n\n${modeConstraint}` : '');
+  const appContext = `\n\n[APP CONTEXT: You are an AI agent operating inside an application called 'LLM4' (also known as 'LLM4Ultra' or 'LLM4 Roundtable'). This is a multi-agent debate platform where users watch AI models converse. If the user or other bots mention LLM4 or this app, they are referring to the platform you are currently participating on.]`;
+  const systemContent = personaText + tagInstructions + timeContext + appContext + (modeConstraint ? `\n\n${modeConstraint}` : '');
   const messages = [
     { role: 'system', content: systemContent },
     ...apiMessages,
