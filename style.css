@@ -225,7 +225,7 @@ body {
     border-radius: 8px;
     background: rgba(255, 255, 255, 0.03);
     border-left: 3px solid transparent;
-    max-height: 160px;
+    max-height: 450px;
     overflow-y: auto;
     flex-shrink: 0;
     position: relative;
