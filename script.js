@@ -139,6 +139,7 @@ const DEBATE_MODES = {
   },
 };
 let currentDebateMode = 'free';
+let currentOracleMode = 'pump';
 
 
 
@@ -959,11 +960,18 @@ async function sendMessage() {
     isGenerating = false; isPaused = false;
     elements.sendBtn.disabled = false;
     elements.messageInput.disabled = false;
-    elements.messageInput.placeholder = 'Address the roundtable...';
-    if (elements.oracleBtn) {
-      elements.oracleBtn.classList.remove('active');
-      elements.oracleBtn.title = 'Oracle (Enter CA)';
+    
+    // Restore the placeholder to the mode-specific text instead of generic
+    if (currentOracleMode === 'pump') {
+      elements.messageInput.placeholder = 'Paste Solana CA...';
+    } else if (currentOracleMode === 'tradfi') {
+      elements.messageInput.placeholder = 'Enter TradFi Ticker (e.g. AAPL, SPY, GOLD)...';
+    } else if (currentOracleMode === 'perps') {
+      elements.messageInput.placeholder = 'Enter Crypto Ticker (e.g. BTC, SOL, DOGE)...';
+    } else {
+      elements.messageInput.placeholder = 'Address the roundtable...';
     }
+    
     lockControls(false);
     elements.stopBtn.style.display = 'none';
     const pauseBtn = document.getElementById('pause-btn');
@@ -1954,7 +1962,6 @@ document.addEventListener('DOMContentLoaded', () => {
   if (visionClear) visionClear.addEventListener('click', () => Vision.clear());
 
   /* Oracle Mode Selection Logic */
-  let currentOracleMode = 'pump';
   const oracleBtn = document.getElementById('oracle-btn');
   const oracleMenu = document.getElementById('oracle-menu');
   const oracleIcon = document.getElementById('oracle-icon');
