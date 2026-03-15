@@ -867,35 +867,80 @@ async function sendMessage() {
   lockControls(true);
   isGenerating = true;
 
-  // Pump or Dump Oracle: Intercept Solana Contract Addresses (handles raw CA or Dex/Pump URLs)
-  const solanaCaRegex = /[1-9A-HJ-NP-Za-km-z]{32,44}/;
+  // Check what Oracle Mode the user has selected
   let finalContent = content;
-  const caMatch = content.match(solanaCaRegex);
-  const cleanedContent = caMatch ? caMatch[0] : null;
+  const cleanedContent = content.trim();
 
-  if (cleanedContent) {
-    appendToTranscript('system', `🔍 <strong>Oracle Detected CA:</strong> Fetching live on-chain metrics for <code>${cleanedContent}</code> from DexScreener...`);
-    const tokenData = await fetchTokenData(cleanedContent);
-    
-    if (tokenData) {
-      finalContent = `[ORACLE INJECTION] The user just submitted the token Contract Address: ${content}.\n` +
-      `[CONTEXT] The user says this is a Pump.fun coin or a Solana memecoin. These are highly volatile, community-driven tokens that are often rug pulls but can sometimes 100x. Factor Pump.fun memecoin culture and logic into the debate.\n` +
-      `Here is the live DexScreener data:\n` +
-      `- Symbol: ${tokenData.symbol}\n` +
-      `- Price: $${tokenData.price}\n` +
-      `- Market Cap: $${tokenData.marketCap}\n` +
-      `- 24h Volume: $${tokenData.volume24h}\n` +
-      `- Liquidity: $${tokenData.liquidity}\n\n` +
-      `[MANDATORY RESEARCH]: If you have Web Search capabilities enabled, you MUST immediately search the web and Twitter for the ticker "$${tokenData.symbol}" to discover the lore, memes, and community sentiment behind this coin.\n\n` +
-      `Debate whether this token is a 100x gem or a rug pull based on these metrics AND its lore. Reference their liquidity, volume, market cap, and narrative explicitly.`;
+  // Mode 1: Pump.fun / Solana CA
+  if (currentOracleMode === 'pump') {
+    const solanaCaRegex = /[1-9A-HJ-NP-Za-km-z]{32,44}/;
+    const caMatch = content.match(solanaCaRegex);
+    const extractedCa = caMatch ? caMatch[0] : null;
+
+    if (extractedCa) {
+      appendToTranscript('system', `🔍 <strong>Oracle Detected CA:</strong> Fetching live on-chain metrics for <code>${extractedCa}</code> from DexScreener...`);
+      const tokenData = await fetchTokenData(extractedCa);
       
-      const chartIframe = `<div style="margin-top: 15px; border-radius: 8px; overflow: hidden; width: 100%; height: 350px;">
-        <iframe width="100%" height="100%" src="https://dexscreener.com/solana/${cleanedContent}?embed=1&theme=dark&trades=0&info=0" frameborder="0"></iframe>
+      if (tokenData) {
+        finalContent = `[ORACLE INJECTION] The user just submitted the token Contract Address: ${content}.\n` +
+        `[CONTEXT] The user says this is a Pump.fun coin or a Solana memecoin. These are highly volatile, community-driven tokens that are often rug pulls but can sometimes 100x. Factor Pump.fun memecoin culture and logic into the debate.\n` +
+        `Here is the live DexScreener data:\n` +
+        `- Symbol: ${tokenData.symbol}\n` +
+        `- Price: $${tokenData.price}\n` +
+        `- Market Cap: $${tokenData.marketCap}\n` +
+        `- 24h Volume: $${tokenData.volume24h}\n` +
+        `- Liquidity: $${tokenData.liquidity}\n\n` +
+        `[MANDATORY RESEARCH]: If you have Web Search capabilities enabled, you MUST immediately search the web and Twitter for the ticker "$${tokenData.symbol}" to discover the lore, memes, and community sentiment behind this coin.\n\n` +
+        `Debate whether this token is a 100x gem or a rug pull based on these metrics AND its lore. Reference their liquidity, volume, market cap, and narrative explicitly.`;
+        
+        const chartIframe = `<div style="margin-top: 15px; border-radius: 8px; overflow: hidden; width: 100%; height: 350px;">
+          <iframe width="100%" height="100%" src="https://dexscreener.com/solana/${extractedCa}?embed=1&theme=dark&trades=0&info=0" frameborder="0"></iframe>
+        </div>`;
+        
+        appendToTranscript('system', `✅ <strong>Token Metrics Secured:</strong> $${tokenData.symbol} | MC: $${tokenData.marketCap} | Liq: $${tokenData.liquidity}${chartIframe}`);
+      } else {
+        appendToTranscript('system', `❌ <strong>Oracle Error:</strong> No active liquidity pool found on DexScreener for that address. Proceeding with standard analysis.`);
+      }
+    }
+  } 
+  
+  // Mode 2: TradFi / Crypto (TradingView Integration)
+  else if (currentOracleMode === 'tradfi') {
+    // Assume the input is a ticker like AAPL or BTCUSD
+    const ticker = cleanedContent.split(' ')[0].toUpperCase().replace(/[^A-Z0-9]/g, '');
+    if (ticker) {
+      appendToTranscript('system', `📈 <strong>Oracle Detected Ticker:</strong> Preparing TradingView chart for <code>${ticker}</code>...`);
+      
+      finalContent = `[ORACLE INJECTION] The user just submitted the TradFi/Crypto ticker: ${ticker}.\n` +
+      `[CONTEXT] The user wants a fundamental and technical analysis debate on this asset. You should debate whether it is currently overvalued, severely undervalued, or facing a major breakout/breakdown.\n` +
+      `[MANDATORY RESEARCH]: If you have Web Search capabilities enabled, you MUST search the web for recent news, earnings reports, or macroeconomic catalysts affecting ${ticker} before answering.\n\n` +
+      `Debate the bull vs. bear case for ${ticker}.`;
+
+      const tvIframe = `<div style="margin-top: 15px; border-radius: 8px; overflow: hidden; width: 100%; height: 380px;">
+        <iframe width="100%" height="100%" src="https://s.tradingview.com/widgetembed/?frameElementId=tradingview_1&symbol=${ticker}&interval=D&hidesidetoolbar=1&symboledit=1&saveimage=1&toolbarbg=f1f3f6&studies=%5B%5D&theme=dark&style=1&timezone=Etc%2FUTC" frameborder="0"></iframe>
       </div>`;
+
+      appendToTranscript('system', `✅ <strong>Chart Secured:</strong> TradingView Interactive Data for ${ticker} ${tvIframe}`);
+    }
+  }
+
+  // Mode 3: Perps / Funding (Coinglass Advanced Crypto)
+  else if (currentOracleMode === 'perps') {
+    const ticker = cleanedContent.split(' ')[0].toUpperCase().replace(/[^A-Z0-9]/g, '');
+    if (ticker) {
+      appendToTranscript('system', `🔥 <strong>Oracle Detected Perps Play:</strong> Fetching liquidation zones and funding data for <code>${ticker}</code>...`);
       
-      appendToTranscript('system', `✅ <strong>Token Metrics Secured:</strong> $${tokenData.symbol} | MC: $${tokenData.marketCap} | Liq: $${tokenData.liquidity}${chartIframe}`);
-    } else {
-      appendToTranscript('system', `❌ <strong>Oracle Error:</strong> No active liquidity pool found on DexScreener for that address. Proceeding with standard analysis.`);
+      finalContent = `[ORACLE INJECTION] The user just submitted the Perpetual Futures ticker: ${ticker}.\n` +
+      `[CONTEXT] The user is a high-leverage crypto "degen" trading perpetual swaps. They want you to debate the likelihood of a massive liquidation cascade, short squeeze, or long squeeze.\n` +
+      `[MANDATORY RESEARCH]: If you have Web Search capabilities enabled, search the web specifically for "Coinglass ${ticker} funding rate" and "Coinglass ${ticker} liquidations" to find the live derivatives data.\n\n` +
+      `Debate whether the Market Makers are about to hunt the longs or the shorts for ${ticker} based on current derivative market structure. Use sharp, aggressive trading terminology.`;
+
+      // Use a generic crypto chart focused on the perpetuals vibe for now
+      const perpIframe = `<div style="margin-top: 15px; border-radius: 8px; overflow: hidden; width: 100%; height: 380px;">
+        <iframe width="100%" height="100%" src="https://s.tradingview.com/widgetembed/?frameElementId=tradingview_1&symbol=BINANCE:${ticker}USDT.P&interval=15&hidesidetoolbar=1&symboledit=1&saveimage=1&toolbarbg=f1f3f6&studies=Volume%40tv-basicstudies&theme=dark&style=1&timezone=Etc%2FUTC" frameborder="0"></iframe>
+      </div>`;
+
+      appendToTranscript('system', `✅ <strong>Derivatives Chart Secured:</strong> 15m Binance ${ticker} Perpetuals ${perpIframe}`);
     }
   }
 
@@ -1907,6 +1952,62 @@ document.addEventListener('DOMContentLoaded', () => {
   if (attachBtn) attachBtn.addEventListener('click', () => Vision.triggerUpload());
   if (visionInput) visionInput.addEventListener('change', e => Vision.handleFile(e.target));
   if (visionClear) visionClear.addEventListener('click', () => Vision.clear());
+
+  /* Oracle Mode Selection Logic */
+  let currentOracleMode = 'pump';
+  const oracleBtn = document.getElementById('oracle-btn');
+  const oracleMenu = document.getElementById('oracle-menu');
+  const oracleIcon = document.getElementById('oracle-icon');
+  
+  if (oracleBtn && oracleMenu) {
+    oracleBtn.addEventListener('click', (e) => {
+      e.stopPropagation();
+      oracleMenu.style.display = oracleMenu.style.display === 'flex' ? 'none' : 'flex';
+      oracleBtn.classList.toggle('active');
+    });
+
+    const oracleOptions = document.querySelectorAll('.oracle-option');
+    oracleOptions.forEach(opt => {
+      opt.addEventListener('click', (e) => {
+        e.stopPropagation();
+        
+        // Update active class
+        oracleOptions.forEach(o => {
+          o.classList.remove('active');
+          o.style.color = 'var(--text-secondary)';
+        });
+        opt.classList.add('active');
+        opt.style.color = 'var(--text-primary)';
+
+        // Update state and UI
+        currentOracleMode = opt.dataset.mode;
+        
+        if (currentOracleMode === 'pump') {
+          oracleIcon.className = 'fa-solid fa-pills';
+          oracleBtn.title = 'Oracle Mode: Pump.fun (CA)';
+        } else if (currentOracleMode === 'tradfi') {
+          oracleIcon.className = 'fa-solid fa-chart-line';
+          oracleBtn.title = 'Oracle Mode: TradFi (Ticker)';
+        } else if (currentOracleMode === 'perps') {
+          oracleIcon.className = 'fa-solid fa-fire';
+          oracleBtn.title = 'Oracle Mode: Perps (Funding)';
+        }
+        
+        // Close menu
+        oracleMenu.style.display = 'none';
+        oracleBtn.classList.add('active'); // Keep the pill looking active to show a mode is selected
+        setTimeout(() => oracleBtn.classList.remove('active'), 500);
+      });
+    });
+
+    // Close oracle menu when clicking outside
+    document.addEventListener('click', (e) => {
+      if (!oracleBtn.contains(e.target) && !oracleMenu.contains(e.target)) {
+        oracleMenu.style.display = 'none';
+        oracleBtn.classList.remove('active');
+      }
+    });
+  }
 
   /* Debate mode selector */
   const modeBtns = document.querySelectorAll('.mode-btn');

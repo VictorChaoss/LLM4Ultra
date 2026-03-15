@@ -223,10 +223,24 @@
                         title="Transcript">
                         <i class="fa-solid fa-layer-group"></i>
                     </button>
-                    <!-- Oracle toggle -->
-                    <button id="oracle-btn" class="icon-btn input-icon-btn" title="Oracle (Enter CA)">
-                        <i class="fa-solid fa-pills"></i>
-                    </button>
+                    <!-- Oracle Mode Selector -->
+                    <div class="oracle-container" style="position: relative;">
+                        <button id="oracle-btn" class="icon-btn input-icon-btn" title="Oracle Mode: Pump.fun (CA)">
+                            <i class="fa-solid fa-pills" id="oracle-icon"></i>
+                        </button>
+                        <!-- Oracle Dropdown Menu -->
+                        <div id="oracle-menu" class="oracle-menu" style="display: none; position: absolute; bottom: 100%; right: 0; background: var(--panel-bg); backdrop-filter: blur(16px); border: 1px solid var(--panel-border); border-radius: 8px; padding: 0.5rem; flex-direction: column; gap: 0.25rem; min-width: 150px; z-index: 100;">
+                            <button class="oracle-option active" data-mode="pump" style="background: transparent; border: none; color: var(--text-primary); text-align: left; padding: 0.5rem; border-radius: 4px; cursor: pointer; display: flex; align-items: center; gap: 0.5rem; transition: background 0.2s;">
+                                <i class="fa-solid fa-pills"></i> Pump.fun / Solana
+                            </button>
+                            <button class="oracle-option" data-mode="tradfi" style="background: transparent; border: none; color: var(--text-secondary); text-align: left; padding: 0.5rem; border-radius: 4px; cursor: pointer; display: flex; align-items: center; gap: 0.5rem; transition: background 0.2s;">
+                                <i class="fa-solid fa-chart-line"></i> TradFi / Crypto
+                            </button>
+                            <button class="oracle-option" data-mode="perps" style="background: transparent; border: none; color: var(--text-secondary); text-align: left; padding: 0.5rem; border-radius: 4px; cursor: pointer; display: flex; align-items: center; gap: 0.5rem; transition: background 0.2s;">
+                                <i class="fa-solid fa-fire"></i> Perps / Funding
+                            </button>
+                        </div>
+                    </div>
                     <!-- Controls toggle -->
                     <button id="controls-toggle-btn" class="icon-btn input-icon-btn" title="Controls">
                         <i class="fa-solid fa-sliders"></i>
@@ -329,7 +343,7 @@
 
     <script src="https://cdn.jsdelivr.net/npm/marked@12/marked.min.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/dompurify@3/dist/purify.min.js"></script>
-    <script src="script.js?v=5.18"></script>
+    <script src="script.js?v=5.19"></script>
 </body>
 
 </html>
