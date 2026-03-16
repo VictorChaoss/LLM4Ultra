@@ -913,7 +913,7 @@ async function sendMessage() {
         `- Graduated to Raydium = liquidity locked, dev cant rug the pool. Still on bonding curve = higher risk, dev can still dump.\n` +
         `- Creator description and lore: does it have a clear, funny, or culturally resonant narrative? Generic descriptions are a red flag. Specific lore (animal, character, meme, political figure) suggests community potential.\n` +
         `\n[YOUR ROLE]: You are a degenerate Solana trader who has seen hundreds of pump.fun launches. Give your HONEST, SPECIFIC verdict: gem or rug? Back it with the actual numbers above and the lore. \n` +
-        `RESPONSE FORMAT: 4-6 sentences. 100-150 words MAX. Raw, direct degen voice. NO fluffy disclaimers. DO NOT summarize what other agents said.`;
+        `RESPONSE FORMAT: 3-4 sentences. 80-100 words MAX. Raw, direct degen voice. NO fluffy disclaimers. DO NOT summarize what other agents said.`;
         
         const chartIframe = `<div style="margin-top: 15px; border-radius: 8px; overflow: hidden; width: 100%; height: 350px;">
           <iframe width="100%" height="100%" src="https://dexscreener.com/solana/${extractedCa}?embed=1&theme=dark&trades=0&info=0" frameborder="0"></iframe>
@@ -946,7 +946,7 @@ async function sendMessage() {
       `Asset: ${ticker}\n` +
       `[YOUR ROLE]: You are an experienced institutional trader or technical analyst. Give your sharp bull or bear verdict on ${ticker}.\n` +
       `If you have Web Search, find the most recent news, earnings, macro catalyst, or on-chain data for ${ticker} that others haven't mentioned yet.\n\n` +
-      `RESPONSE FORMAT: 4-6 sentences. 100-150 words MAX. Sharp, specific, no waffle. Give a directional call (bullish/bearish/neutral-leaning). DO NOT summarize or repeat what other agents said. Build on or challenge their specific point.`;
+      `RESPONSE FORMAT: 3-4 sentences. 80-100 words MAX. Sharp, specific, no waffle. Give a directional call (bullish/bearish/neutral-leaning). DO NOT summarize or repeat what other agents said. Build on or challenge their specific point.`;
 
       const tvIframe = `<div style="margin-top: 15px; border-radius: 8px; overflow: hidden; width: 100%; height: 380px;">
         <iframe width="100%" height="100%" src="https://s.tradingview.com/widgetembed/?frameElementId=tradingview_1&symbol=${ticker}&interval=D&hidesidetoolbar=1&symboledit=1&saveimage=1&toolbarbg=f1f3f6&studies=%5B%5D&theme=dark&style=1&timezone=Etc%2FUTC" frameborder="0"></iframe>
@@ -967,7 +967,7 @@ async function sendMessage() {
       `[YOUR ROLE]: You are a high-leverage degen who lives and breathes derivatives. Give your aggressive, specific take on whether longs or shorts are about to get REKT for ${ticker}.\n` +
       `Key things to reason about: funding rate direction (positive = longs paying, bearish signal; negative = shorts paying, bullish signal), open interest trend, where liquidity clusters sit (likely stop hunt zones), and whether price action suggests MM accumulation or distribution.\n` +
       `If Web Search is enabled, search "Coinglass ${ticker} funding rate" and "${ticker} open interest" for live data.\n\n` +
-      `RESPONSE FORMAT: 4-6 sentences, 100-150 words MAX. Aggressive, sharp trading voice. Take a clear directional stance. DO NOT summarize other agents. Call out a specific price level or liquidation zone if possible.`;
+      `RESPONSE FORMAT: 3-4 sentences, 80-100 words MAX. Aggressive, sharp trading voice. Take a clear directional stance. DO NOT summarize other agents. Call out a specific price level or liquidation zone if possible.`;
 
       // Use a generic crypto chart focused on the perpetuals vibe for now
       const perpIframe = `<div style="margin-top: 15px; border-radius: 8px; overflow: hidden; width: 100%; height: 380px;">
