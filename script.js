@@ -902,10 +902,18 @@ async function sendMessage() {
           if (loreData.marketCapSol) loreSection += `- Pump.fun Market Cap: ${loreData.marketCapSol}\n`;
         }
         
-        finalContent = `[ORACLE INJECTION] Solana CA submitted: ${extractedCa}. Token: $${tokenData.symbol} (${tokenData.name || ''}).\n` +
-        `[MARKET]: Price $${tokenData.price} | MC $${tokenData.marketCap} | 24h Vol $${tokenData.volume24h} | Liq $${tokenData.liquidity}\n` +
+        finalContent = `[ORACLE — PUMP.FUN MEMECOIN ANALYSIS]\n` +
+        `Token: $${tokenData.symbol} (${tokenData.name || 'Unknown'})\n` +
+        `Price: $${tokenData.price} | Market Cap: $${tokenData.marketCap} | 24h Volume: $${tokenData.volume24h} | Liquidity: $${tokenData.liquidity}\n` +
         loreSection +
-        `\n[CRITICAL RESPONSE RULES]: Give YOUR OWN sharp take on whether this is a 100x gem or a rug pull. Max 3 sentences. Under 60 words. DO NOT summarize other agents. DO NOT quote them. Reference the lore/metrics directly.`;
+        `\n[HOW TO INTERPRET THESE NUMBERS — USE THIS TO FORM YOUR TAKE]:\n` +
+        `- Market Cap: Under $50k = extremely early/risky, still on bonding curve. $50k-$500k = micro-cap, community forming. $500k-$5M = small cap, gaining traction. $5M+ = established, pump likely already happened.\n` +
+        `- Liquidity: Under $5k = danger, one whale sell crashes it. $5k-$50k = thin but tradeable. $50k+ = healthy, harder to manipulate.\n` +
+        `- Volume/MC Ratio: If 24h volume is higher than market cap, that's insane organic interest. If volume is tiny vs MC, nobody is trading it — dead coin walking.\n` +
+        `- Graduated to Raydium = liquidity locked, dev cant rug the pool. Still on bonding curve = higher risk, dev can still dump.\n` +
+        `- Creator description and lore: does it have a clear, funny, or culturally resonant narrative? Generic descriptions are a red flag. Specific lore (animal, character, meme, political figure) suggests community potential.\n` +
+        `\n[YOUR ROLE]: You are a degenerate Solana trader who has seen hundreds of pump.fun launches. Give your HONEST, SPECIFIC verdict: gem or rug? Back it with the actual numbers above and the lore. \n` +
+        `RESPONSE FORMAT: 4-6 sentences. 100-150 words MAX. Raw, direct degen voice. NO fluffy disclaimers. DO NOT summarize what other agents said.`;
         
         const chartIframe = `<div style="margin-top: 15px; border-radius: 8px; overflow: hidden; width: 100%; height: 350px;">
           <iframe width="100%" height="100%" src="https://dexscreener.com/solana/${extractedCa}?embed=1&theme=dark&trades=0&info=0" frameborder="0"></iframe>
@@ -934,9 +942,11 @@ async function sendMessage() {
     if (ticker) {
       appendToTranscript('system', `📈 <strong>Oracle Detected Ticker:</strong> Preparing TradingView chart for <code>${ticker}</code>...`);
       
-      finalContent = `[ORACLE INJECTION] The user submitted TradFi/Crypto ticker: ${ticker}.\n` +
-      `Debate whether it is overvalued, undervalued, or facing a major breakout/breakdown. Research recent news if you have Web Search enabled.\n\n` +
-      `[CRITICAL RESPONSE RULES]: Give YOUR OWN sharp take. Max 3 sentences. Under 60 words. DO NOT summarize or repeat what other agents said. DO NOT quote them.`;
+      finalContent = `[ORACLE — TRADFI/CRYPTO MARKET ANALYSIS]\n` +
+      `Asset: ${ticker}\n` +
+      `[YOUR ROLE]: You are an experienced institutional trader or technical analyst. Give your sharp bull or bear verdict on ${ticker}.\n` +
+      `If you have Web Search, find the most recent news, earnings, macro catalyst, or on-chain data for ${ticker} that others haven't mentioned yet.\n\n` +
+      `RESPONSE FORMAT: 4-6 sentences. 100-150 words MAX. Sharp, specific, no waffle. Give a directional call (bullish/bearish/neutral-leaning). DO NOT summarize or repeat what other agents said. Build on or challenge their specific point.`;
 
       const tvIframe = `<div style="margin-top: 15px; border-radius: 8px; overflow: hidden; width: 100%; height: 380px;">
         <iframe width="100%" height="100%" src="https://s.tradingview.com/widgetembed/?frameElementId=tradingview_1&symbol=${ticker}&interval=D&hidesidetoolbar=1&symboledit=1&saveimage=1&toolbarbg=f1f3f6&studies=%5B%5D&theme=dark&style=1&timezone=Etc%2FUTC" frameborder="0"></iframe>
@@ -952,10 +962,12 @@ async function sendMessage() {
     if (ticker) {
       appendToTranscript('system', `🔥 <strong>Oracle Detected Perps Play:</strong> Fetching liquidation zones and funding data for <code>${ticker}</code>...`);
       
-      finalContent = `[ORACLE INJECTION] The user submitted the Perpetual Futures ticker: ${ticker}.\n` +
-      `Debate whether Market Makers are about to hunt the longs or the shorts. Focus on funding rate direction and liquidation clusters. Use aggressive trading terminology.\n` +
-      `Search "Coinglass ${ticker} funding rate" and "${ticker} liquidations" if Web Search is enabled.\n\n` +
-      `[CRITICAL RESPONSE RULES]: Give YOUR OWN sharp, aggressive take only. Max 3 sentences. Under 60 words. DO NOT summarize or repeat what other agents said.`;
+      finalContent = `[ORACLE — PERPETUAL FUTURES / DERIVATIVES ANALYSIS]\n` +
+      `Asset: ${ticker} Perpetuals (Binance USDT-M)\n` +
+      `[YOUR ROLE]: You are a high-leverage degen who lives and breathes derivatives. Give your aggressive, specific take on whether longs or shorts are about to get REKT for ${ticker}.\n` +
+      `Key things to reason about: funding rate direction (positive = longs paying, bearish signal; negative = shorts paying, bullish signal), open interest trend, where liquidity clusters sit (likely stop hunt zones), and whether price action suggests MM accumulation or distribution.\n` +
+      `If Web Search is enabled, search "Coinglass ${ticker} funding rate" and "${ticker} open interest" for live data.\n\n` +
+      `RESPONSE FORMAT: 4-6 sentences, 100-150 words MAX. Aggressive, sharp trading voice. Take a clear directional stance. DO NOT summarize other agents. Call out a specific price level or liquidation zone if possible.`;
 
       // Use a generic crypto chart focused on the perpetuals vibe for now
       const perpIframe = `<div style="margin-top: 15px; border-radius: 8px; overflow: hidden; width: 100%; height: 380px;">
