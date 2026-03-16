@@ -1001,7 +1001,6 @@ async function sendMessage() {
     } else {
       elements.messageInput.placeholder = 'Address the roundtable...';
     }
-    
     lockControls(false);
     elements.stopBtn.style.display = 'none';
     const pauseBtn = document.getElementById('pause-btn');
@@ -2051,7 +2050,11 @@ document.addEventListener('DOMContentLoaded', () => {
         // Update state and UI
         currentOracleMode = opt.dataset.mode;
         
-        if (currentOracleMode === 'pump') {
+        if (currentOracleMode === 'normal') {
+          oracleIcon.className = 'fa-solid fa-comments';
+          oracleBtn.title = 'Oracle (click to switch mode)';
+          elements.messageInput.placeholder = 'Address the roundtable...';
+        } else if (currentOracleMode === 'pump') {
           oracleIcon.className = 'fa-solid fa-pills';
           oracleBtn.title = 'Oracle Mode: Pump.fun (CA)';
           elements.messageInput.placeholder = 'Paste Solana CA...';
