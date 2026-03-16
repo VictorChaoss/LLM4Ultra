@@ -902,18 +902,10 @@ async function sendMessage() {
           if (loreData.marketCapSol) loreSection += `- Pump.fun Market Cap: ${loreData.marketCapSol}\n`;
         }
         
-        finalContent = `[ORACLE INJECTION] The user just submitted the Solana Contract Address: ${content}.\n` +
-        `[CONTEXT] This is a Pump.fun memecoin. These are highly volatile, community-driven tokens. Factor Pump.fun memecoin culture into the debate.\n` +
-        `\n[MARKET METRICS FROM DEXSCREENER]:\n` +
-        `- Name: ${tokenData.name || 'Unknown'}\n` +
-        `- Symbol: $${tokenData.symbol}\n` +
-        `- Price: $${tokenData.price}\n` +
-        `- Market Cap: $${tokenData.marketCap}\n` +
-        `- 24h Volume: $${tokenData.volume24h}\n` +
-        `- Liquidity: $${tokenData.liquidity}\n` +
+        finalContent = `[ORACLE INJECTION] Solana CA submitted: ${extractedCa}. Token: $${tokenData.symbol} (${tokenData.name || ''}).\n` +
+        `[MARKET]: Price $${tokenData.price} | MC $${tokenData.marketCap} | 24h Vol $${tokenData.volume24h} | Liq $${tokenData.liquidity}\n` +
         loreSection +
-        `\n[MANDATORY RESEARCH]: If you have Web Search enabled, also search Twitter/X for "$${tokenData.symbol}" or the coin's name to find the latest community sentiment and memes.\n\n` +
-        `Debate whether this token is a 100x gem or a rug pull based on ALL the data above. Explicitly reference the lore/description, liquidity, volume, and whether it has graduated.`;
+        `\n[CRITICAL RESPONSE RULES]: Give YOUR OWN sharp take on whether this is a 100x gem or a rug pull. Max 3 sentences. Under 60 words. DO NOT summarize other agents. DO NOT quote them. Reference the lore/metrics directly.`;
         
         const chartIframe = `<div style="margin-top: 15px; border-radius: 8px; overflow: hidden; width: 100%; height: 350px;">
           <iframe width="100%" height="100%" src="https://dexscreener.com/solana/${extractedCa}?embed=1&theme=dark&trades=0&info=0" frameborder="0"></iframe>
@@ -942,10 +934,9 @@ async function sendMessage() {
     if (ticker) {
       appendToTranscript('system', `📈 <strong>Oracle Detected Ticker:</strong> Preparing TradingView chart for <code>${ticker}</code>...`);
       
-      finalContent = `[ORACLE INJECTION] The user just submitted the TradFi/Crypto ticker: ${ticker}.\n` +
-      `[CONTEXT] The user wants a fundamental and technical analysis debate on this asset. You should debate whether it is currently overvalued, severely undervalued, or facing a major breakout/breakdown.\n` +
-      `[MANDATORY RESEARCH]: If you have Web Search capabilities enabled, you MUST search the web for recent news, earnings reports, or macroeconomic catalysts affecting ${ticker} before answering.\n\n` +
-      `Debate the bull vs. bear case for ${ticker}.`;
+      finalContent = `[ORACLE INJECTION] The user submitted TradFi/Crypto ticker: ${ticker}.\n` +
+      `Debate whether it is overvalued, undervalued, or facing a major breakout/breakdown. Research recent news if you have Web Search enabled.\n\n` +
+      `[CRITICAL RESPONSE RULES]: Give YOUR OWN sharp take. Max 3 sentences. Under 60 words. DO NOT summarize or repeat what other agents said. DO NOT quote them.`;
 
       const tvIframe = `<div style="margin-top: 15px; border-radius: 8px; overflow: hidden; width: 100%; height: 380px;">
         <iframe width="100%" height="100%" src="https://s.tradingview.com/widgetembed/?frameElementId=tradingview_1&symbol=${ticker}&interval=D&hidesidetoolbar=1&symboledit=1&saveimage=1&toolbarbg=f1f3f6&studies=%5B%5D&theme=dark&style=1&timezone=Etc%2FUTC" frameborder="0"></iframe>
@@ -961,10 +952,10 @@ async function sendMessage() {
     if (ticker) {
       appendToTranscript('system', `🔥 <strong>Oracle Detected Perps Play:</strong> Fetching liquidation zones and funding data for <code>${ticker}</code>...`);
       
-      finalContent = `[ORACLE INJECTION] The user just submitted the Perpetual Futures ticker: ${ticker}.\n` +
-      `[CONTEXT] The user is a high-leverage crypto "degen" trading perpetual swaps. They want you to debate the likelihood of a massive liquidation cascade, short squeeze, or long squeeze.\n` +
-      `[MANDATORY RESEARCH]: If you have Web Search capabilities enabled, search the web specifically for "Coinglass ${ticker} funding rate" and "Coinglass ${ticker} liquidations" to find the live derivatives data.\n\n` +
-      `Debate whether the Market Makers are about to hunt the longs or the shorts for ${ticker} based on current derivative market structure. Use sharp, aggressive trading terminology.`;
+      finalContent = `[ORACLE INJECTION] The user submitted the Perpetual Futures ticker: ${ticker}.\n` +
+      `Debate whether Market Makers are about to hunt the longs or the shorts. Focus on funding rate direction and liquidation clusters. Use aggressive trading terminology.\n` +
+      `Search "Coinglass ${ticker} funding rate" and "${ticker} liquidations" if Web Search is enabled.\n\n` +
+      `[CRITICAL RESPONSE RULES]: Give YOUR OWN sharp, aggressive take only. Max 3 sentences. Under 60 words. DO NOT summarize or repeat what other agents said.`;
 
       // Use a generic crypto chart focused on the perpetuals vibe for now
       const perpIframe = `<div style="margin-top: 15px; border-radius: 8px; overflow: hidden; width: 100%; height: 380px;">
