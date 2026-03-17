@@ -139,7 +139,7 @@ const DEBATE_MODES = {
   },
 };
 let currentDebateMode = 'free';
-let currentOracleMode = 'pump';
+let currentOracleMode = 'normal';
 
 
 

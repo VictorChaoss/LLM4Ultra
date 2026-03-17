@@ -229,16 +229,16 @@
                     </button>
                     <!-- Oracle Mode Selector -->
                     <div class="oracle-container" style="position: relative;">
-                        <button id="oracle-btn" class="icon-btn input-icon-btn" title="Oracle Mode: Pump.fun (CA)">
-                            <i class="fa-solid fa-pills" id="oracle-icon"></i>
+                        <button id="oracle-btn" class="icon-btn input-icon-btn" title="Oracle (click to switch mode)">
+                            <i class="fa-solid fa-comments" id="oracle-icon"></i>
                         </button>
                         <!-- Oracle Dropdown Menu -->
                         <div id="oracle-menu" class="oracle-menu" style="display: none; position: absolute; bottom: 100%; right: 0; background: var(--panel-bg); backdrop-filter: blur(16px); border: 1px solid var(--panel-border); border-radius: 8px; padding: 0.5rem; flex-direction: column; gap: 0.25rem; min-width: 160px; z-index: 100;">
-                            <button class="oracle-option" data-mode="normal" style="background: transparent; border: none; color: var(--text-secondary); text-align: left; padding: 0.5rem; border-radius: 4px; cursor: pointer; display: flex; align-items: center; gap: 0.5rem; transition: background 0.2s;">
+                            <button class="oracle-option active" data-mode="normal" style="background: transparent; border: none; color: var(--text-primary); text-align: left; padding: 0.5rem; border-radius: 4px; cursor: pointer; display: flex; align-items: center; gap: 0.5rem; transition: background 0.2s;">
                                 <i class="fa-solid fa-comments"></i> Normal Chat
                             </button>
                             <div style="border-top: 1px solid var(--panel-border); margin: 0.2rem 0;"></div>
-                            <button class="oracle-option active" data-mode="pump" style="background: transparent; border: none; color: var(--text-primary); text-align: left; padding: 0.5rem; border-radius: 4px; cursor: pointer; display: flex; align-items: center; gap: 0.5rem; transition: background 0.2s;">
+                            <button class="oracle-option" data-mode="pump" style="background: transparent; border: none; color: var(--text-secondary); text-align: left; padding: 0.5rem; border-radius: 4px; cursor: pointer; display: flex; align-items: center; gap: 0.5rem; transition: background 0.2s;">
                                 <i class="fa-solid fa-pills"></i> Pump.fun / Solana
                             </button>
                             <button class="oracle-option" data-mode="tradfi" style="background: transparent; border: none; color: var(--text-secondary); text-align: left; padding: 0.5rem; border-radius: 4px; cursor: pointer; display: flex; align-items: center; gap: 0.5rem; transition: background 0.2s;">
@@ -351,7 +351,7 @@
 
     <script src="https://cdn.jsdelivr.net/npm/marked@12/marked.min.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/dompurify@3/dist/purify.min.js"></script>
-    <script src="script.js?v=5.27"></script>
+    <script src="script.js?v=5.28"></script>
 </body>
 
 </html>
